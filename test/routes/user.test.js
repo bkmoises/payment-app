@@ -1,8 +1,11 @@
 const request = require("supertest");
 const app = require("../../src/app");
+const db = require("../../src/models/users");
 
-it("Deve criar um novo usuário", () => {
-  const user = {
+let user;
+
+beforeEach(() => {
+  user = {
     userId: "1",
     name: "user-1",
     cpf: "123.456.789-10",
@@ -10,7 +13,9 @@ it("Deve criar um novo usuário", () => {
     passwd: "12345",
     seller: true,
   };
+});
 
+it("Deve criar um novo usuário", () => {
   return request(app)
     .post("/user")
     .send(user)
@@ -22,14 +27,16 @@ it("Deve criar um novo usuário", () => {
     });
 });
 
-it("Deve retornar todos os usuários cadastrados", () => {
-  return request(app)
-    .get("/user")
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty("cpf", "123.456.789-10");
-    });
+it.only("Deve retornar todos os usuários cadastrados", () => {
+  return db.create(user).then((r) => {
+    return request(app)
+      .get("/user")
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.length).toBeGreaterThan(0);
+        expect(res.body[0]).toHaveProperty("cpf", "123.456.789-10");
+      });
+  });
 });
 
 it("Deve remover um usuário cadastrado", () => {
