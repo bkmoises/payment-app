@@ -4,7 +4,14 @@ const db = require("../models/users");
 router
   .route("/")
   .post(async (req, res) => {
-    const user = req.body;
+    const { name, cpf, mail, passwd, seller } = req.body;
+    const user = { name, cpf, mail, passwd, seller };
+    const mailVerify = await db.findOne({ mail });
+
+    if (mailVerify) {
+      return res.status(400).json({ error: "CPF já cadastrado no sistema" });
+    }
+
     const result = await db.create(user);
     return res.status(201).json(result);
   })

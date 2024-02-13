@@ -1,14 +1,34 @@
 const request = require("supertest");
 const app = require("../../src/app");
 const db = require("../../src/models/users");
-const cpf = require("../../helpers/cpf_generator");
+// const cpf = require("../../helpers/cpf_generator");
 
 let user;
+
+const mockCpf = () => {
+  const randomNumber = () => Math.floor(Math.random() * 10);
+
+  const cpfArray = Array.from({ length: 9 }, randomNumber);
+
+  const d1 =
+    cpfArray.reduce((acc, digit, index) => acc + digit * (index + 1), 0) % 11;
+  cpfArray.push(d1 < 10 ? d1 : 0);
+
+  const d2 =
+    cpfArray.reduce((acc, digit, index) => acc + digit * index, 0) % 11;
+  cpfArray.push(d2 < 10 ? d2 : 0);
+
+  const cpf = cpfArray
+    .join("")
+    .replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+
+  return cpf;
+};
 
 beforeEach(() => {
   user = {
     name: `user-${Date.now()}`,
-    cpf: cpf(),
+    cpf: mockCpf(),
     mail: `${Date.now()}@mail.com`,
     passwd: "12345",
     seller: true,
@@ -25,6 +45,18 @@ it("Deve criar um novo usuário", () => {
       expect(res.body.name).toBe(user.name);
       expect(res.body.cpf).toBe(user.cpf);
     });
+});
+
+it("Não deve criar um usuário com cpf repetido", () => {
+  return db.create(user).then((r) => {
+    return request(app)
+      .post("/user")
+      .send(user)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe("CPF já cadastrado no sistema");
+      });
+  });
 });
 
 it("Deve retornar uma lista de usuários cadastrados", () => {
