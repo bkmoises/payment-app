@@ -45,4 +45,8 @@ app.put("/user/:id", (req, res) => {
   return res.status(200).json(user);
 });
 
+app.delete("/user/:id", (req, res) => {
+  return res.status(204).json();
+});
+
 module.exports = app;
