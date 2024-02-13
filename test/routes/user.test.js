@@ -54,7 +54,7 @@ it("Não deve cadastrar um novo usuário sem nome", () => {
     .send(user)
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O campo name é requirido");
+      expect(res.body.error).toBe("O campo name é requerido");
     });
 });
 
@@ -65,7 +65,7 @@ it("Não deve cadastrar um novo usuário sem cpf", () => {
     .send(user)
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O campo cpf é requirido");
+      expect(res.body.error).toBe("O campo cpf é requerido");
     });
 });
 
@@ -76,7 +76,7 @@ it("Não deve cadastrar um novo usuário sem email", () => {
     .send(user)
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O campo mail é requirido");
+      expect(res.body.error).toBe("O campo mail é requerido");
     });
 });
 
@@ -87,7 +87,7 @@ it("Não deve cadastrar um novo usuário sem senha", () => {
     .send(user)
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O campo passwd é requirido");
+      expect(res.body.error).toBe("O campo passwd é requerido");
     });
 });
 
@@ -98,7 +98,7 @@ it("Não deve cadastrar um novo usuário sem tipo de usuário", () => {
     .send(user)
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O campo seller é requirido");
+      expect(res.body.error).toBe("O campo seller é requerido");
     });
 });
 
