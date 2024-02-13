@@ -4,7 +4,9 @@
   "description": "payment app",
   "main": "app.js",
   "scripts": {
-    "test": "jest --watchAll --versobe=true"
+    "test": "jest --watchAll --versobe=true",
+    "lint": "eslint --fix src/** test/**",
+    "start": "nodemon ./src/server.js"
   },
   "repository": {
     "type": "git",
