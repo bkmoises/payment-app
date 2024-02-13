@@ -1,15 +1,15 @@
 const request = require("supertest");
 const app = require("../../src/app");
 const db = require("../../src/models/users");
+const cpf = require("../../helpers/cpf_generator");
 
 let user;
 
 beforeEach(() => {
   user = {
-    userId: "1",
-    name: "user-1",
-    cpf: "123.456.789-10",
-    mail: "mail@mail.com",
+    name: `user-${Date.now()}`,
+    cpf: cpf(),
+    mail: `${Date.now()}@mail.com`,
     passwd: "12345",
     seller: true,
   };
@@ -28,7 +28,7 @@ it("Deve criar um novo usuário", () => {
 });
 
 it.only("Deve retornar todos os usuários cadastrados", () => {
-  return db.create(user).then((r) => {
+  return db.create(user).then(() => {
     return request(app)
       .get("/user")
       .then((res) => {
@@ -45,7 +45,6 @@ it("Deve remover um usuário cadastrado", () => {
     .send({ name: "new-name", passwd: "54321" })
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.userId).toBe("1");
       expect(res.body.name).toBe("new-name");
       expect(res.body.passwd).toBe("54321");
     });
