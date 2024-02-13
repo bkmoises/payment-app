@@ -11,11 +11,7 @@ app.use(express.json());
 
 app.use("/user", user);
 
-try {
-  mongoose.connect(connectionString);
-} catch (err) {
-  process.exit(1);
-}
+mongoose.connect(connectionString);
 
 app.get("/", (_req, res) => {
   res.status(200).json({ message: "Hello World!" });
