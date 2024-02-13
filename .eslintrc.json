@@ -12,5 +12,6 @@
   },
   "rules": {
     "quotes": ["error", "double"]
-  }
+  },
+  "plugins": ["jest"]
 }
