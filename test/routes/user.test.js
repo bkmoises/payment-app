@@ -52,14 +52,15 @@ it("Deve retornar um usuário cadastrado por id", () => {
 });
 
 it("Deve remover um usuário cadastrado", () => {
-  return request(app)
-    .put("/user/1")
-    .send({ name: "new-name", passwd: "54321" })
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.name).toBe("new-name");
-      expect(res.body.passwd).toBe("54321");
-    });
+  return db.create(user).then((r) => {
+    return request(app)
+      .put(`/user/${r.id}`)
+      .send({ name: "new-name", passwd: "54321" })
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.modifiedCount).toBe(1);
+      });
+  });
 });
 
 it("Deve remover um usuário", () => {

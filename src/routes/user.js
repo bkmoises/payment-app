@@ -21,22 +21,13 @@ router
     const result = await db.findOne({ _id: id });
     return res.status(200).json(result);
   })
-  .put((req, res) => {
-    const user = {
-      userId: "1",
-      name: "user-1",
-      cpf: "123.456.789-10",
-      mail: "mail@mail.com",
-      passwd: "12345",
-      seller: true,
-    };
+  .put(async (req, res) => {
+    const { id } = req.params;
+    const user = req.body;
+    const result = await db.updateOne({ _id: id }, user);
 
-    user.name = req.body.name;
-    user.passwd = req.body.passwd;
-
-    return res.status(200).json(user);
+    return res.status(200).json(result);
   })
-
   .delete(async (req, res) => {
     const { id } = req.params;
     await db.deleteOne({ _id: id });
