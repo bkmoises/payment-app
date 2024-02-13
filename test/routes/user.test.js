@@ -63,9 +63,11 @@ it("Deve remover um usuário cadastrado", () => {
 });
 
 it("Deve remover um usuário", () => {
-  return request(app)
-    .delete("/user/1")
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+  return db.create(user).then((r) => {
+    return request(app)
+      .delete(`/user/${r.id}`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
 });

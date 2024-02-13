@@ -37,7 +37,9 @@ router
     return res.status(200).json(user);
   })
 
-  .delete((req, res) => {
+  .delete(async (req, res) => {
+    const { id } = req.params;
+    await db.deleteOne({ _id: id });
     return res.status(204).json();
   });
 
