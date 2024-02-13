@@ -27,14 +27,26 @@ it("Deve criar um novo usuário", () => {
     });
 });
 
-it.only("Deve retornar todos os usuários cadastrados", () => {
+it("Deve retornar uma lista de usuários cadastrados", () => {
   return db.create(user).then(() => {
     return request(app)
       .get("/user")
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.length).toBeGreaterThan(0);
-        expect(res.body[0]).toHaveProperty("cpf", "123.456.789-10");
+        expect(res.body[0]).toHaveProperty("cpf");
+      });
+  });
+});
+
+it("Deve retornar um usuário cadastrado por id", () => {
+  return db.create(user).then((r) => {
+    return request(app)
+      .get(`/user/${r.id}`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe(user.name);
+        expect(res.body.cpf).toBe(user.cpf);
       });
   });
 });

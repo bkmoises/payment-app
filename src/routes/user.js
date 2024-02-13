@@ -16,6 +16,11 @@ router
 
 router
   .route("/:id")
+  .get(async (req, res) => {
+    const { id } = req.params;
+    const result = await db.findOne({ _id: id });
+    return res.status(200).json(result);
+  })
   .put((req, res) => {
     const user = {
       userId: "1",
