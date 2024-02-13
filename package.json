@@ -1,0 +1,24 @@
+{
+  "name": "payment-app",
+  "version": "1.0.0",
+  "description": "payment app",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest --watchAll --versobe=true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bkmoises/payment-app.git"
+  },
+  "keywords": [
+    "payment",
+    "api",
+    "node"
+  ],
+  "author": "Moisés Andrade",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bkmoises/payment-app/issues"
+  },
+  "homepage": "https://github.com/bkmoises/payment-app#readme"
+}
