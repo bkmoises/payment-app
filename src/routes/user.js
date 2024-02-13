@@ -9,19 +9,9 @@ router
     return res.status(201).json(result);
   })
 
-  .get((_req, res) => {
-    const user = [
-      {
-        userId: "1",
-        name: "user-1",
-        cpf: "123.456.789-10",
-        mail: "mail@mail.com",
-        passwd: "12345",
-        seller: true,
-      },
-    ];
-
-    return res.status(200).json(user);
+  .get(async (_req, res) => {
+    const result = await db.find();
+    return res.status(200).json(result);
   });
 
 router
