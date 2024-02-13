@@ -5,12 +5,19 @@ router
   .route("/")
   .post(async (req, res) => {
     const { name, cpf, mail, passwd, seller } = req.body;
-    const user = { name, cpf, mail, passwd, seller };
-    const mailVerify = await db.findOne({ mail });
+    const cpfVerify = await db.findOne({ cpf });
+    const dataVerify = await db.findOne({ $or: [{ cpf }, { mail }] });
 
-    if (mailVerify) {
-      return res.status(400).json({ error: "CPF já cadastrado no sistema" });
+    if (dataVerify) {
+      if (dataVerify.cpf === cpf) {
+        return res.status(400).json({ error: "CPF já cadastrado no sistema" });
+      }
+      if (dataVerify.mail === mail) {
+        return res.status(400).json({ error: "Email á cadastrado no sistema" });
+      }
     }
+
+    const user = { name, cpf, mail, passwd, seller };
 
     const result = await db.create(user);
     return res.status(201).json(result);

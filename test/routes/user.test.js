@@ -48,13 +48,26 @@ it("Deve criar um novo usuário", () => {
 });
 
 it("Não deve criar um usuário com cpf repetido", () => {
-  return db.create(user).then((r) => {
+  return db.create(user).then(() => {
     return request(app)
       .post("/user")
       .send(user)
       .then((res) => {
         expect(res.status).toBe(400);
         expect(res.body.error).toBe("CPF já cadastrado no sistema");
+      });
+  });
+});
+
+it("Não deve criar um usuário com email repetido", () => {
+  return db.create(user).then(() => {
+    user.cpf = mockCpf();
+    return request(app)
+      .post("/user")
+      .send(user)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe("Email já cadastrado no sistema");
       });
   });
 });
