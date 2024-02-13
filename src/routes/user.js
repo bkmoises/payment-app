@@ -1,10 +1,12 @@
 const router = require("express").Router();
+const db = require("../models/users");
 
 router
   .route("/")
-  .post((req, res) => {
+  .post(async (req, res) => {
     const user = req.body;
-    return res.status(201).json(user);
+    const result = await db.create(user);
+    return res.status(201).json(result);
   })
 
   .get((_req, res) => {
