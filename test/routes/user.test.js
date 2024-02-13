@@ -151,7 +151,7 @@ it("Deve retornar um usuário cadastrado por id", () => {
   });
 });
 
-it("Deve remover um usuário cadastrado", () => {
+it("Deve atualizar os dados de um usuário", () => {
   return db.create(user).then((r) => {
     return request(app)
       .put(`/user/${r.id}`)
