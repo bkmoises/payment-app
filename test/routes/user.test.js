@@ -35,7 +35,7 @@ beforeEach(() => {
   };
 });
 
-it("Deve criar um novo usuário", () => {
+it("Deve cadastrar um novo usuário", () => {
   return request(app)
     .post("/user")
     .send(user)
@@ -47,7 +47,62 @@ it("Deve criar um novo usuário", () => {
     });
 });
 
-it("Não deve criar um usuário com cpf repetido", () => {
+it("Não deve cadastrar um novo usuário sem nome", () => {
+  user.name = "";
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O campo name é requirido");
+    });
+});
+
+it("Não deve cadastrar um novo usuário sem cpf", () => {
+  user.cpf = "";
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O campo cpf é requirido");
+    });
+});
+
+it("Não deve cadastrar um novo usuário sem email", () => {
+  user.mail = "";
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O campo mail é requirido");
+    });
+});
+
+it("Não deve cadastrar um novo usuário sem senha", () => {
+  user.passwd = "";
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O campo passwd é requirido");
+    });
+});
+
+it("Não deve cadastrar um novo usuário sem tipo de usuário", () => {
+  user.seller = "";
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O campo seller é requirido");
+    });
+});
+
+it("Não deve cadastrar um usuário com cpf repetido", () => {
   return db.create(user).then(() => {
     return request(app)
       .post("/user")
@@ -59,7 +114,7 @@ it("Não deve criar um usuário com cpf repetido", () => {
   });
 });
 
-it("Não deve criar um usuário com email repetido", () => {
+it("Não deve cadastrar um usuário com email repetido", () => {
   return db.create(user).then(() => {
     user.cpf = mockCpf();
     return request(app)

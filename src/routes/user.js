@@ -5,7 +5,14 @@ router
   .route("/")
   .post(async (req, res) => {
     const { name, cpf, mail, passwd, seller } = req.body;
-    const cpfVerify = await db.findOne({ cpf });
+    const user = { name, cpf, mail, passwd, seller };
+    const requiredField = Object.keys(user);
+
+    for (const field of requiredField) {
+      if (!user[field])
+        return res.status(400).json({ error: `O campo ${field} é requirido` });
+    }
+
     const dataVerify = await db.findOne({ $or: [{ cpf }, { mail }] });
 
     if (dataVerify) {
@@ -13,13 +20,14 @@ router
         return res.status(400).json({ error: "CPF já cadastrado no sistema" });
       }
       if (dataVerify.mail === mail) {
-        return res.status(400).json({ error: "Email á cadastrado no sistema" });
+        return res
+          .status(400)
+          .json({ error: "Email já cadastrado no sistema" });
       }
     }
 
-    const user = { name, cpf, mail, passwd, seller };
-
     const result = await db.create(user);
+
     return res.status(201).json(result);
   })
 
