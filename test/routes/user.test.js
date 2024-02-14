@@ -243,3 +243,19 @@ it("Deve retornar um erro caso não consiga atualizar os dados de um usuário", 
       expect(res.body.error).toBe("Erro ao alterar usuário");
     });
 });
+
+it("Deve retornar um erro caso não consiga cadastrar um usuário", () => {
+  const dbCreateMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(db, "create").mockImplementation(dbCreateMock);
+
+  return request(app)
+    .post("/user")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao criar usuário");
+    });
+});
