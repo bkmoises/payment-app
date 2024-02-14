@@ -152,9 +152,9 @@ it("Deve retornar um usuário cadastrado por id", () => {
 
 it("Não deve retornar um usuário caso o id não esteja cadastrado", () => {
   return request(app)
-    .get("/user/312321321")
+    .get("/user/65c41a9b4d91f0cd87899999")
     .then((res) => {
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(404);
       expect(res.body.error).toBe("Usuário não encontrado");
     });
 });
@@ -181,9 +181,9 @@ it("Deve remover um usuário", () => {
   });
 });
 
-it("Deve retornar um erro 500 caso haja problema de conexão com o banco", () => {
+it("Deve retornar um erro caso não consiga recuperar os usuários", () => {
   const dbFindMock = jest.fn(() => {
-    throw new Error("Erro simulado ao recuperar usuários do banco de dados");
+    throw new Error();
   });
 
   jest.spyOn(db, "find").mockImplementation(dbFindMock);
@@ -195,5 +195,20 @@ it("Deve retornar um erro 500 caso haja problema de conexão com o banco", () =>
       expect(res.body.error).toBe(
         "Erro ao recuperar usuários do banco de dados",
       );
+    });
+});
+
+it("Deve retornar um erro caso o id fornecido seja invalido", () => {
+  const dbFindMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(db, "findOne").mockImplementation(dbFindMock);
+
+  return request(app)
+    .get("/user/123454321")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao recuperar usuário");
     });
 });
