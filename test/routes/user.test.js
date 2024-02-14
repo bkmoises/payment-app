@@ -1,7 +1,6 @@
 const request = require("supertest");
 const app = require("../../src/app");
 const db = require("../../src/models/users");
-// const cpf = require("../../helpers/cpf_generator");
 
 let user;
 
