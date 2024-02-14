@@ -39,13 +39,27 @@ module.exports = {
     };
   },
 
+  /**
+   * Obtém todos os usuários do banco de dados.
+   * @returns {Object} Um objeto contendo statusCode e usuários.
+   */
   getAllUsers: async () => {
-    const users = await db.find();
+    try {
+      // Consulta ao banco de dados para obter todos os usuários
+      const userList = await db.find();
 
-    return {
-      statusCode: 200,
-      users,
-    };
+      // Retorna os usuários com o status de sucesso
+      return {
+        statusCode: 200,
+        users: userList,
+      };
+    } catch (error) {
+      // Em caso de erro, retorna um objeto com status de erro e mensagem
+      return {
+        statusCode: 500,
+        error: "Erro ao recuperar usuários do banco de dados",
+      };
+    }
   },
 
   getUser: async (id) => {

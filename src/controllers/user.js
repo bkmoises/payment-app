@@ -14,7 +14,10 @@ module.exports = {
   },
 
   getAllUsers: async (_req, res) => {
-    const { users, statusCode } = await userService.getAllUsers();
+    const { users, statusCode, error } = await userService.getAllUsers();
+
+    if (error) return res.status(statusCode).json({ error });
+
     return res.status(statusCode).json(users);
   },
 
