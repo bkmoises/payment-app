@@ -150,6 +150,15 @@ it("Deve retornar um usuário cadastrado por id", () => {
   });
 });
 
+it("Deve retornar um usuário cadastrado por id", () => {
+  return request(app)
+    .get(`/user/312321321`)
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("Usuário não encontrado");
+    });
+});
+
 it("Deve atualizar os dados de um usuário", () => {
   return db.create(user).then((r) => {
     return request(app)

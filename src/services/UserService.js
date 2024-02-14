@@ -47,4 +47,20 @@ module.exports = {
       users,
     };
   },
+
+  getUser: async (id) => {
+    try {
+      const user = await db.findOne({ _id: id });
+
+      return {
+        statusCode: 200,
+        user,
+      };
+    } catch (e) {
+      return {
+        statusCode: 400,
+        error: "Usuário não encontrado",
+      };
+    }
+  },
 };

@@ -6,23 +6,25 @@ module.exports = {
     const { name, cpf, mail, passwd, seller } = req.body;
     const user = { name, cpf, mail, passwd, seller };
 
-    const result = await userService.createUser(user);
+    const { newUser, statusCode, error } = await userService.createUser(user);
 
-    if (result.error)
-      return res.status(result.statusCode).json({ error: result.error });
+    if (error) return res.status(statusCode).json({ error });
 
-    return res.status(result.statusCode).json(result.newUser);
+    return res.status(statusCode).json(newUser);
   },
 
   getAllUsers: async (_req, res) => {
-    const result = await userService.getAllUsers();
-    return res.status(result.statusCode).json(result.users);
+    const { users, statusCode } = await userService.getAllUsers();
+    return res.status(statusCode).json(users);
   },
 
   getUserById: async (req, res) => {
     const { id } = req.params;
-    const result = await db.findOne({ _id: id });
-    return res.status(200).json(result);
+    const { user, statusCode, error } = await userService.getUser({ _id: id });
+
+    if (!user) return res.status(statusCode).json({ error });
+
+    return res.status(statusCode).json(user);
   },
 
   updateOneUser: async (req, res) => {
