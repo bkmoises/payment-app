@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const user = require("./routes/user");
+const account = require("./routes/account");
 
 const app = express();
 const connectionString = process.env.CONNECTIONSTRING;
@@ -10,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/user", user);
+app.use("/account", account);
 
 mongoose.connect(connectionString);
 
