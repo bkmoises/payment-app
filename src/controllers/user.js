@@ -30,14 +30,19 @@ module.exports = {
   updateOneUser: async (req, res) => {
     const { id } = req.params;
     const user = req.body;
-    const result = await db.updateOne({ _id: id }, user);
 
-    return res.status(200).json(result);
+    const { message, statusCode } = await userService.updateUser(
+      { _id: id },
+      user,
+    );
+
+    return res.status(statusCode).json({ message });
   },
 
   deleteOneUser: async (req, res) => {
     const { id } = req.params;
-    await db.deleteOne({ _id: id });
-    return res.status(204).json();
+    const { statusCode } = await userService.deleteUser({ _id: id });
+
+    return res.status(statusCode).json();
   },
 };

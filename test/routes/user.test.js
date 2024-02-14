@@ -150,9 +150,9 @@ it("Deve retornar um usuário cadastrado por id", () => {
   });
 });
 
-it("Deve retornar um usuário cadastrado por id", () => {
+it("Não deve retornar um usuário caso o id não esteja cadastrado", () => {
   return request(app)
-    .get(`/user/312321321`)
+    .get("/user/312321321")
     .then((res) => {
       expect(res.status).toBe(400);
       expect(res.body.error).toBe("Usuário não encontrado");
@@ -166,7 +166,7 @@ it("Deve atualizar os dados de um usuário", () => {
       .send({ name: "new-name", passwd: "54321" })
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.body.modifiedCount).toBe(1);
+        expect(res.body.message).toBe(`Usuário alterado com sucesso`);
       });
   });
 });

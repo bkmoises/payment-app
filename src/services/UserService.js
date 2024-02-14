@@ -63,4 +63,19 @@ module.exports = {
       };
     }
   },
+
+  updateUser: async (id, user) => {
+    const modifiedUser = await db.updateOne(id, user);
+
+    return {
+      statusCode: 200,
+      message: "Usuário alterado com sucesso",
+    };
+  },
+
+  deleteUser: async (id) => {
+    await db.deleteOne(id);
+
+    return { statusCode: 204 };
+  },
 };
