@@ -1,33 +1,17 @@
 const db = require("../models/users");
+const userService = require("../services/UserService");
 
 module.exports = {
   createUser: async (req, res) => {
     const { name, cpf, mail, passwd, seller } = req.body;
     const user = { name, cpf, mail, passwd, seller };
-    const requiredFields = Object.keys(user);
 
-    for (const field of requiredFields) {
-      if (!user[field]) {
-        return res.status(400).json({ error: `O campo ${field} é requerido` });
-      }
-    }
+    const result = await userService.createUser(user);
 
-    const dataVerify = await db.findOne({ $or: [{ cpf }, { mail }] });
+    if (result.error)
+      return res.status(result.statusCode).json({ error: result.error });
 
-    if (dataVerify) {
-      if (dataVerify.cpf === cpf) {
-        return res.status(400).json({ error: "CPF já cadastrado no sistema" });
-      }
-      if (dataVerify.mail === mail) {
-        return res
-          .status(400)
-          .json({ error: "Email já cadastrado no sistema" });
-      }
-    }
-
-    const result = await db.create(user);
-
-    return res.status(201).json(result);
+    return res.status(result.statusCode).json(result.newUser);
   },
 
   getAllUsers: async (_req, res) => {
