@@ -62,18 +62,34 @@ module.exports = {
     }
   },
 
+  /**
+   * Obt�m um usu�rio pelo ID.
+   * @param {string} id - O ID do usu�rio a ser obtido.
+   * @returns {Object} Um objeto contendo statusCode e usu�rio.
+   */
   getUser: async (id) => {
     try {
+      // Consulta ao banco de dados para obter o usuário com o ID fornecido
       const user = await db.findOne({ _id: id });
 
+      // Verifica se o usuário foi encontrado
+      if (!user) {
+        return {
+          statusCode: 404,
+          error: "Usuário não encontrado",
+        };
+      }
+
+      // Retorna o usuário com o status de sucesso
       return {
         statusCode: 200,
         user,
       };
-    } catch (e) {
+    } catch (error) {
+      // Em caso de erro desconhecido, retorna um objeto com status de erro e mensagem
       return {
-        statusCode: 400,
-        error: "Usuário não encontrado",
+        statusCode: 500,
+        error: "Erro ao recuperar usuário",
       };
     }
   },
