@@ -1,42 +1,56 @@
 const db = require("../models/users");
 
 module.exports = {
+  /**
+   * Cria um novo usuário.
+   * @param {Object} user - O objeto contendo os dados do usuário a ser criado.
+   * @returns {Object} Um objeto indicando o status da operação.
+   */
   createUser: async (user) => {
-    const { cpf, mail } = user;
-    const requiredFields = Object.keys(user);
-
-    for (const field of requiredFields) {
-      if (!user[field]) {
-        return {
-          statusCode: 400,
-          error: `O campo ${field} é requerido`,
-        };
+    try {
+      const requiredFields = Object.keys(user);
+      // Verifica se os campos obrigatórios estão presentes
+      for (const field of requiredFields) {
+        if (!user[field]) {
+          return {
+            statusCode: 400,
+            error: `O campo ${field} é requerido`,
+          };
+        }
       }
+
+      // Verifica se o CPF ou o e-mail já estão cadastrados
+      const { cpf, mail } = user;
+      const existingUser = await db.findOne({ $or: [{ cpf }, { mail }] });
+      // Verifica se o CPF ou o e-mail j� est�o cadastrados
+      if (existingUser) {
+        if (existingUser.cpf === cpf) {
+          return {
+            statusCode: 400,
+            error: "CPF já cadastrado no sistema",
+          };
+        }
+        if (existingUser.mail === mail) {
+          return {
+            statusCode: 400,
+            error: "Email já cadastrado no sistema",
+          };
+        }
+      }
+      // Cria o novo usu�rio no banco de dados
+      const newUser = await db.create(user);
+      // Retorna um status de sucesso e o novo usu�rio
+      return {
+        statusCode: 201,
+        newUser,
+      };
+    } catch (error) {
+      // Em caso de erro, retorna um objeto com status de erro e mensagem
+      return {
+        statusCode: 500,
+        error: "Erro ao criar usuário",
+      };
     }
-
-    const dataVerify = await db.findOne({ $or: [{ cpf }, { mail }] });
-
-    if (dataVerify) {
-      if (dataVerify.cpf === cpf) {
-        return {
-          statusCode: 400,
-          error: "CPF já cadastrado no sistema",
-        };
-      }
-      if (dataVerify.mail === mail) {
-        return {
-          statusCode: 400,
-          error: "Email já cadastrado no sistema",
-        };
-      }
-    }
-
-    const newUser = await db.create(user);
-
-    return {
-      statusCode: 201,
-      newUser,
-    };
   },
 
   /**
