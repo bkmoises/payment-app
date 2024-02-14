@@ -199,16 +199,31 @@ it("Deve retornar um erro caso não consiga recuperar os usuários", () => {
 });
 
 it("Deve retornar um erro caso o id fornecido seja invalido", () => {
-  const dbFindMock = jest.fn(() => {
+  const dbFindOneMock = jest.fn(() => {
     throw new Error();
   });
 
-  jest.spyOn(db, "findOne").mockImplementation(dbFindMock);
+  jest.spyOn(db, "findOne").mockImplementation(dbFindOneMock);
 
   return request(app)
     .get("/user/123454321")
     .then((res) => {
       expect(res.status).toBe(500);
       expect(res.body.error).toBe("Erro ao recuperar usuário");
+    });
+});
+
+it("Deve retornar um erro caso não consiga excluir um usuário", () => {
+  const dbDeleteOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(db, "deleteOne").mockImplementation(dbDeleteOneMock);
+
+  return request(app)
+    .delete("/user/321412321")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao excluir usuário");
     });
 });
