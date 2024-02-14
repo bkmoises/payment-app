@@ -10,7 +10,7 @@ it("Deve rodar na porta 3000", () => {
     });
 });
 
-it("Não deve permitir acesso a rota não existente", () => {
+it("Deve retornar um error quando tentar acessar uma rota inesistente", () => {
   return request(app)
     .get("/mockRoute")
     .then((res) => {
