@@ -94,13 +94,29 @@ module.exports = {
     }
   },
 
+  /**
+   * Atualiza um usuário pelo ID.
+   * @param {string} id - O ID do usuário a ser atualizado.
+   * @param {Object} user - O objeto contendo os dados atualizados do usuário.
+   * @returns {Object} Um objeto indicando o status da operação.
+   */
   updateUser: async (id, user) => {
-    const modifiedUser = await db.updateOne(id, user);
+    try {
+      // Atualiza o usuário no banco de dados
+      await db.updateOne(id, user);
 
-    return {
-      statusCode: 200,
-      message: "Usuário alterado com sucesso",
-    };
+      // Retorna um status de sucesso
+      return {
+        statusCode: 200,
+        message: "Usuário alterado com sucesso",
+      };
+    } catch (error) {
+      // Em caso de erro, retorna um objeto com status de erro e mensagem
+      return {
+        statusCode: 500,
+        error: "Erro ao alterar usuário",
+      };
+    }
   },
 
   /**

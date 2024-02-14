@@ -34,10 +34,12 @@ module.exports = {
     const { id } = req.params;
     const user = req.body;
 
-    const { message, statusCode } = await userService.updateUser(
+    const { message, statusCode, error } = await userService.updateUser(
       { _id: id },
       user,
     );
+
+    if (error) return res.status(statusCode).json({ error });
 
     return res.status(statusCode).json({ message });
   },
