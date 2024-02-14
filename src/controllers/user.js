@@ -15,8 +15,8 @@ module.exports = {
   },
 
   getAllUsers: async (_req, res) => {
-    const result = await db.find();
-    return res.status(200).json(result);
+    const result = await userService.getAllUsers();
+    return res.status(result.statusCode).json(result.users);
   },
 
   getUserById: async (req, res) => {

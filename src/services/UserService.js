@@ -38,4 +38,13 @@ module.exports = {
       newUser,
     };
   },
+
+  getAllUsers: async () => {
+    const users = await db.find();
+
+    return {
+      statusCode: 200,
+      users,
+    };
+  },
 };
