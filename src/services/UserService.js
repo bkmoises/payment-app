@@ -63,9 +63,9 @@ module.exports = {
   },
 
   /**
-   * Obt�m um usu�rio pelo ID.
-   * @param {string} id - O ID do usu�rio a ser obtido.
-   * @returns {Object} Um objeto contendo statusCode e usu�rio.
+   * Obtém um usuário pelo ID.
+   * @param {string} id - O ID do usuário a ser obtido.
+   * @returns {Object} Um objeto contendo statusCode e usuário.
    */
   getUser: async (id) => {
     try {
@@ -103,9 +103,24 @@ module.exports = {
     };
   },
 
+  /**
+   * Exclui um usuário pelo ID.
+   * @param {string} id - O ID do usuário a ser excluído.
+   * @returns {Object} Um objeto indicando o status da operação.
+   */
   deleteUser: async (id) => {
-    await db.deleteOne(id);
+    try {
+      // Exclui o usuário do banco de dados
+      await db.deleteOne({ _id: id });
 
-    return { statusCode: 204 };
+      // Retorna um status de sucesso
+      return { statusCode: 204 };
+    } catch (error) {
+      // Em caso de erro, retorna um objeto com status de erro e mensagem
+      return {
+        statusCode: 500,
+        error: "Erro ao excluir usuário",
+      };
+    }
   },
 };
