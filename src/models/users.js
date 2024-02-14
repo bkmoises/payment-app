@@ -24,6 +24,16 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  created_at: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model("users", userSchema);
