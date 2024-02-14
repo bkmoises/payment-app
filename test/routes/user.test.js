@@ -180,3 +180,20 @@ it("Deve remover um usuário", () => {
       });
   });
 });
+
+it("Deve retornar um erro 500 caso haja problema de conexão com o banco", () => {
+  const dbFindMock = jest.fn(() => {
+    throw new Error("Erro simulado ao recuperar usuários do banco de dados");
+  });
+
+  jest.spyOn(db, "find").mockImplementation(dbFindMock);
+
+  return request(app)
+    .get("/user")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe(
+        "Erro ao recuperar usuários do banco de dados",
+      );
+    });
+});
