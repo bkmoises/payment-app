@@ -34,7 +34,7 @@ beforeEach(() => {
   };
 });
 
-it("Deve criar uma nova conta", async () => {
+it("Deve criar uma nova conta", () => {
   return userDb.create(user).then((r) => {
     return request(app)
       .post("/account")
@@ -45,4 +45,14 @@ it("Deve criar uma nova conta", async () => {
         expect(res.body).toHaveProperty("balance", 0);
       });
   });
+});
+
+it("Deve retornar uma lista de contas", () => {
+  return request(app)
+    .get("/account")
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBeGreaterThan(0);
+      expect(res.body[0]).toHaveProperty("balance", 0);
+    });
 });
