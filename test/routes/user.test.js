@@ -227,3 +227,19 @@ it("Deve retornar um erro caso não consiga excluir um usuário", () => {
       expect(res.body.error).toBe("Erro ao excluir usuário");
     });
 });
+
+it("Deve retornar um erro caso não consiga atualizar os dados de um usuário", () => {
+  const dbUpdateOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(db, "updateOne").mockImplementation(dbUpdateOneMock);
+
+  return request(app)
+    .put("/user/123454321")
+    .send(user)
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao alterar usuário");
+    });
+});
