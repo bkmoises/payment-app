@@ -61,6 +61,20 @@ it("Não deve criar uma conta sem userId", () => {
     });
 });
 
+it("Não deve criar uma conta com userId repetido", () => {
+  return userDb.create(user).then((r) => {
+    return accDb.create({ userId: r.id }).then((acc) => {
+      return request(app)
+        .post("/account")
+        .send({ userId: r.id })
+        .then((res) => {
+          expect(res.status).toBe(400);
+          expect(res.body.error).toBe("Usuário já possui uma conta");
+        });
+    });
+  });
+});
+
 it("Deve retornar uma lista de contas", () => {
   return accDb.create({ userId: Date.now() }).then(() => {
     return request(app)
