@@ -128,3 +128,21 @@ it("Deve remover um conta por id", () => {
       });
   });
 });
+
+it("Deve retornar um erro caso não consiga criar uma conta", () => {
+  const dbCreateMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(accDb, "create").mockImplementation(dbCreateMock);
+
+  return userDb.create(user).then((r) => {
+    return request(app)
+      .post("/account")
+      .send({ userId: r.id })
+      .then((res) => {
+        expect(res.status).toBe(500);
+        expect(res.body.error).toBe("Erro ao criar usuário");
+      });
+  });
+});
