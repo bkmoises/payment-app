@@ -7,9 +7,7 @@ module.exports = {
     const { account, statusCode, error } =
       await accountService.createAccount(userId);
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json(account);
+    return res.status(statusCode).json(account || { error });
   },
 
   getAllAccounts: async (_req, res) => {
@@ -19,10 +17,11 @@ module.exports = {
 
   getOneAccount: async (req, res) => {
     const { id } = req.params;
-    const { account, statusCode } = await accountService.getOneAccount({
+    const { account, statusCode, error } = await accountService.getOneAccount({
       _id: id,
     });
-    return res.status(statusCode).json(account);
+
+    return res.status(statusCode).json(account || { error });
   },
 
   updateOneAccount: async (req, res) => {

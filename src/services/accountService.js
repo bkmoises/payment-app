@@ -38,6 +38,13 @@ module.exports = {
   getOneAccount: async (id) => {
     const account = await accDb.findOne({ _id: id });
 
+    if (!account) {
+      return {
+        statusCode: 404,
+        error: "Usuário não encontrado",
+      };
+    }
+
     return {
       statusCode: 200,
       account,
