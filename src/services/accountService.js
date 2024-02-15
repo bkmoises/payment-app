@@ -23,6 +23,7 @@ module.exports = {
       // Cria uma nova conta para o usuário
       const account = await accDb.create({ userId });
 
+      // Em caso de sucesso, retorna uma nova conta
       return {
         statusCode: 201,
         account,
@@ -41,6 +42,7 @@ module.exports = {
       // Obtém a lista de todas as contas
       const accountList = await accDb.find();
 
+      // Em caso de sucesso retorna uma lista de contas
       return {
         statusCode: 200,
         accountList,
