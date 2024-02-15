@@ -77,11 +77,18 @@ module.exports = {
   },
 
   updateOneAccount: async (id, data) => {
-    await accDb.updateOne(id, data);
-    return {
-      statusCode: 200,
-      message: "Conta alterada com sucesso",
-    };
+    try {
+      await accDb.updateOne(id, data);
+      return {
+        statusCode: 200,
+        message: "Conta alterada com sucesso",
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao atualizar dados da conta",
+      };
+    }
   },
 
   deleteOneAccount: async (id) => {

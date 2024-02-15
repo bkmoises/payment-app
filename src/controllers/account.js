@@ -29,11 +29,10 @@ module.exports = {
     const { id } = req.params;
     const { balance, status } = req.body;
 
-    const { message, statusCode } = await accountService.updateOneAccount(
-      { _id: id },
-      { balance, status },
-    );
-    return res.status(statusCode).json({ message });
+    const { message, statusCode, error } =
+      await accountService.updateOneAccount({ _id: id }, { balance, status });
+
+    return res.status(statusCode).json(message ? { message } : { error });
   },
 
   deleteOneAccount: async (req, res) => {
