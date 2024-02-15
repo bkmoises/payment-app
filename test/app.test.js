@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../src/app");
 
-it("Deve rodar na porta 3000", () => {
+it("Deve responder na raiz", () => {
   return request(app)
     .get("/")
     .then((res) => {
