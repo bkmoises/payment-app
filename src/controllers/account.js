@@ -8,4 +8,8 @@ module.exports = {
   getAllAccounts: async (_req, res) => {
     return res.status(200).json([{ userId: 1, balance: 0 }]);
   },
+
+  getOneAccount: async (req, res) => {
+    return res.status(200).json({ userId: 1 });
+  },
 };
