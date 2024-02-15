@@ -1,3 +1,4 @@
+const userDb = require("../models/users");
 const accDb = require("../models/accounts");
 
 module.exports = {
@@ -8,6 +9,15 @@ module.exports = {
         return {
           statusCode: 400,
           error: "O campo userId é requerido",
+        };
+      }
+
+      // Verifica se existe um usuário com o ID informado
+      const existingUser = await userDb.findOne({ _id: userId });
+      if (!existingUser) {
+        return {
+          statusCode: 400,
+          error: "O usuário informado não existe",
         };
       }
 
