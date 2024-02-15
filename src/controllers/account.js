@@ -17,4 +17,8 @@ module.exports = {
     const { balance } = req.body;
     return res.status(200).json({ userId: 1, balance });
   },
+
+  deleteOneAccount: async (req, res) => {
+    return res.status(204).json();
+  },
 };
