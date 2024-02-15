@@ -1,8 +1,11 @@
+const accDb = require("../models/accounts");
+
 module.exports = {
   createAccount: async (req, res) => {
-    const { id } = req.body;
+    const { userId } = req.body;
+    const newAccount = await accDb.create({ userId });
 
-    return res.status(201).json({ userId: id, balance: 0 });
+    return res.status(201).json(newAccount);
   },
 
   getAllAccounts: async (_req, res) => {

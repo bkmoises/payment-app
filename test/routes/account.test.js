@@ -38,7 +38,7 @@ it("Deve criar uma nova conta", () => {
   return userDb.create(user).then((r) => {
     return request(app)
       .post("/account")
-      .send({ id: r.id })
+      .send({ userId: r.id })
       .then((res) => {
         expect(res.status).toBe(201);
         expect(res.body.userId).toBe(r.id);
