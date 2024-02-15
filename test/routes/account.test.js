@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../../src/app");
 const userDb = require("../../src/models/users");
 const accDb = require("../../src/models/accounts");
+const account = require("../../src/controllers/account");
 
 let user;
 let userId;
@@ -125,6 +126,7 @@ it("Deve remover um conta por id", () => {
       .delete(`/account/${r.id}`)
       .then((res) => {
         expect(res.status).toBe(204);
+        expect(res.body).not.toHaveProperty("error");
       });
   });
 });
@@ -190,5 +192,20 @@ it("Deve retornar um erro caso não consiga ataulizar uma conta", () => {
     .then((res) => {
       expect(res.status).toBe(500);
       expect(res.body.error).toBe("Erro ao atualizar dados da conta");
+    });
+});
+
+it("Deve retornar um erro caso não consiga remover uma conta", () => {
+  const dbDeleteOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(accDb, "deleteOne").mockImplementation(dbDeleteOneMock);
+
+  return request(app)
+    .delete("/account/65cd5d0fa30a48596f000000")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao remover conta");
     });
 });
