@@ -19,8 +19,10 @@ module.exports = {
 
   getOneAccount: async (req, res) => {
     const { id } = req.params;
-    const account = await accDb.findOne({ _id: id });
-    return res.status(200).json(account);
+    const { account, statusCode } = await accountService.getOneAccount({
+      _id: id,
+    });
+    return res.status(statusCode).json(account);
   },
 
   updateOneAccount: async (req, res) => {

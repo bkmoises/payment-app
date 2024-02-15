@@ -25,4 +25,13 @@ module.exports = {
       accountList,
     };
   },
+
+  getOneAccount: async (id) => {
+    const account = await accDb.findOne({ _id: id });
+
+    return {
+      statusCode: 200,
+      account,
+    };
+  },
 };
