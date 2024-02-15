@@ -19,7 +19,7 @@ app.get("/", (_req, res) => {
   res.status(200).json({ message: "Hello World!" });
 });
 
-app.all("/*", (req, res) => {
+app.all("/*", (_req, res) => {
   res.status(404).json({ message: "Rota não encontrada" });
 });
 
