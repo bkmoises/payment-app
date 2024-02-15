@@ -3,6 +3,7 @@ const accDb = require("../models/accounts");
 module.exports = {
   createAccount: async (userId) => {
     try {
+      // Verifica se o userId foi fornecido
       if (!userId) {
         return {
           statusCode: 400,
@@ -10,8 +11,8 @@ module.exports = {
         };
       }
 
+      // Verifica se o usuário já possui uma conta
       const existingAccount = await accDb.findOne({ userId });
-
       if (existingAccount) {
         return {
           statusCode: 400,
@@ -19,6 +20,7 @@ module.exports = {
         };
       }
 
+      // Cria uma nova conta para o usuário
       const account = await accDb.create({ userId });
 
       return {
@@ -26,6 +28,7 @@ module.exports = {
         account,
       };
     } catch (error) {
+      // Em caso de erro desconhecido, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
         error: "Erro ao criar usuário",
