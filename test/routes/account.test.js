@@ -76,6 +76,16 @@ it("Não deve criar uma conta com userId repetido", () => {
   });
 });
 
+it("Não deve criar uma conta para usuário um usuário não cadastrado", () => {
+  return request(app)
+    .post("/account")
+    .send({ userId: "65cd5d0fa30a48596f000000" })
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("O usuário informado não existe");
+    });
+});
+
 it("Deve retornar uma lista de contas", () => {
   return accDb.create({ userId: Date.now() }).then(() => {
     return request(app)
