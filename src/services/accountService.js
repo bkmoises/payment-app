@@ -16,4 +16,13 @@ module.exports = {
       account,
     };
   },
+
+  getAllAccounts: async () => {
+    const accountList = await accDb.find();
+
+    return {
+      statusCode: 200,
+      accountList,
+    };
+  },
 };

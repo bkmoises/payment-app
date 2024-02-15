@@ -13,8 +13,8 @@ module.exports = {
   },
 
   getAllAccounts: async (_req, res) => {
-    const accountList = await accDb.find();
-    return res.status(200).json(accountList);
+    const { accountList, statusCode } = await accountService.getAllAccounts();
+    return res.status(statusCode).json(accountList);
   },
 
   getOneAccount: async (req, res) => {
