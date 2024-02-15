@@ -9,12 +9,14 @@ module.exports = {
   },
 
   getAllAccounts: async (_req, res) => {
-    const userList = await accDb.find();
-    return res.status(200).json(userList);
+    const accountList = await accDb.find();
+    return res.status(200).json(accountList);
   },
 
   getOneAccount: async (req, res) => {
-    return res.status(200).json({ userId: 1 });
+    const { id } = req.params;
+    const account = await accDb.findOne({ _id: id });
+    return res.status(200).json(account);
   },
 
   updateOneAccount: async (req, res) => {
