@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../../src/app");
 const userDb = require("../../src/models/users");
+const accDb = require("../../src/models/accounts");
 
 let user;
 
@@ -48,7 +49,7 @@ it("Deve criar uma nova conta", () => {
 });
 
 it("Deve retornar uma lista de contas", () => {
-  return userDb.create(user).then(() => {
+  return accDb.create({ userId: Date.now() }).then(() => {
     return request(app)
       .get("/account")
       .then((res) => {
@@ -60,12 +61,16 @@ it("Deve retornar uma lista de contas", () => {
 });
 
 it("Deve retornar uma conta por id", () => {
-  return request(app)
-    .get("/account/1")
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.userId).toBe(1);
-    });
+  const userId = Date.now().toString();
+
+  return accDb.create({ userId }).then((r) => {
+    return request(app)
+      .get(`/account/${r.id}`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.userId).toBe(userId);
+      });
+  });
 });
 
 it("Deve alterar uma conta por id", () => {
