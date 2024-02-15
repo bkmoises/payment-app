@@ -51,6 +51,18 @@ it("Deve criar uma nova conta", () => {
   });
 });
 
+it("Não deve criar uma conta sem userID", () => {
+  return userDb.create(user).then((r) => {
+    return request(app)
+      .post("/account")
+      .send({ userId: "" })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe("O campo userId é requerido");
+      });
+  });
+});
+
 it("Deve retornar uma lista de contas", () => {
   return accDb.create({ userId: Date.now() }).then(() => {
     return request(app)
