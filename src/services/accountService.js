@@ -21,6 +21,14 @@ module.exports = {
         };
       }
 
+      // Verifica se o usuário está ativo
+      if (!existingUser.status) {
+        return {
+          statusCode: 400,
+          error: "O usuário informado está inativo",
+        };
+      }
+
       // Verifica se o usuário já possui uma conta
       const existingAccount = await accDb.findOne({ userId });
       if (existingAccount) {
