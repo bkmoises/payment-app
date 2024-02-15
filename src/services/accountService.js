@@ -16,7 +16,7 @@ module.exports = {
       if (existingAccount) {
         return {
           statusCode: 400,
-          error: "Usuário já possui uma conta",
+          error: "Este usuário já possui uma conta",
         };
       }
 
@@ -31,7 +31,7 @@ module.exports = {
       // Em caso de erro desconhecido, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
-        error: "Erro ao criar usuário",
+        error: "Erro ao criar conta",
       };
     }
   },
@@ -55,19 +55,25 @@ module.exports = {
   },
 
   getOneAccount: async (id) => {
-    const account = await accDb.findOne({ _id: id });
+    try {
+      const account = await accDb.findOne({ _id: id });
+      if (!account) {
+        return {
+          statusCode: 404,
+          error: "Conta não encontrada",
+        };
+      }
 
-    if (!account) {
       return {
-        statusCode: 404,
-        error: "Usuário não encontrado",
+        statusCode: 200,
+        account,
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao recuperar conta",
       };
     }
-
-    return {
-      statusCode: 200,
-      account,
-    };
   },
 
   updateOneAccount: async (id, data) => {
