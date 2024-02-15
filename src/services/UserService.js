@@ -1,4 +1,5 @@
-const db = require("../models/users");
+const dbUser = require("../models/users");
+const dbAccount = require("../models/accounts");
 
 module.exports = {
   /**
@@ -21,8 +22,8 @@ module.exports = {
 
       // Verifica se o CPF ou o e-mail já estão cadastrados
       const { cpf, mail } = user;
-      const existingUser = await db.findOne({ $or: [{ cpf }, { mail }] });
-      // Verifica se o CPF ou o e-mail j� est�o cadastrados
+      const existingUser = await dbUser.findOne({ $or: [{ cpf }, { mail }] });
+      // Verifica se o CPF ou o e-mail já estão cadastrados
       if (existingUser) {
         if (existingUser.cpf === cpf) {
           return {
@@ -37,9 +38,9 @@ module.exports = {
           };
         }
       }
-      // Cria o novo usu�rio no banco de dados
-      const newUser = await db.create(user);
-      // Retorna um status de sucesso e o novo usu�rio
+      // Cria o novo usuário no banco de dados
+      const newUser = await dbUser.create(user);
+      // Retorna um status de sucesso e o novo usuário
       return {
         statusCode: 201,
         newUser,
@@ -60,7 +61,7 @@ module.exports = {
   getAllUsers: async () => {
     try {
       // Consulta ao banco de dados para obter todos os usuários
-      const userList = await db.find();
+      const userList = await dbUser.find();
 
       // Retorna os usuários com o status de sucesso
       return {
@@ -84,7 +85,7 @@ module.exports = {
   getUser: async (id) => {
     try {
       // Consulta ao banco de dados para obter o usuário com o ID fornecido
-      const user = await db.findOne({ _id: id });
+      const user = await dbUser.findOne({ _id: id });
 
       // Verifica se o usuário foi encontrado
       if (!user) {
@@ -117,7 +118,7 @@ module.exports = {
   updateUser: async (id, user) => {
     try {
       // Atualiza o usuário no banco de dados
-      await db.updateOne(id, user);
+      await dbUser.updateOne(id, user);
 
       // Retorna um status de sucesso
       return {
@@ -141,7 +142,7 @@ module.exports = {
   deleteUser: async (id) => {
     try {
       // Exclui o usuário do banco de dados
-      await db.deleteOne({ _id: id });
+      await dbUser.deleteOne({ _id: id });
 
       // Retorna um status de sucesso
       return { statusCode: 204 };
