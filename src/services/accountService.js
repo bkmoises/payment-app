@@ -38,6 +38,7 @@ module.exports = {
 
   getAllAccounts: async () => {
     try {
+      // Obtém a lista de todas as contas
       const accountList = await accDb.find();
 
       return {
@@ -45,6 +46,7 @@ module.exports = {
         accountList,
       };
     } catch (error) {
+      // Em caso de erro, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
         error: "Erro ao recuperar contas",
