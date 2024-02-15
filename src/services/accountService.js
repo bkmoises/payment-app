@@ -56,19 +56,22 @@ module.exports = {
 
   getOneAccount: async (id) => {
     try {
+      // Procura a conta pelo ID
       const account = await accDb.findOne({ _id: id });
+      // Se a conta não for encontrada, retorna um status 404
       if (!account) {
         return {
           statusCode: 404,
           error: "Conta não encontrada",
         };
       }
-
+      // Retorna a conta se encontrada
       return {
         statusCode: 200,
         account,
       };
     } catch (error) {
+      // Em caso de erro, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
         error: "Erro ao recuperar conta",
@@ -78,12 +81,15 @@ module.exports = {
 
   updateOneAccount: async (id, data) => {
     try {
+      // Atualiza os dados da conta com o ID fornecido
       await accDb.updateOne(id, data);
+      // Retorna uma mensagem de sucesso
       return {
         statusCode: 200,
         message: "Conta alterada com sucesso",
       };
     } catch (error) {
+      // Em caso de erro, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
         error: "Erro ao atualizar dados da conta",
@@ -93,10 +99,12 @@ module.exports = {
 
   deleteOneAccount: async (id) => {
     try {
+      // Remove a conta com o ID fornecido
       await accDb.deleteOne({ _id: id });
-
+      // Retorna um status de sucesso sem conteúdo
       return { statusCode: 204 };
     } catch (error) {
+      // Em caso de erro, retorna um status de erro interno do servidor
       return {
         statusCode: 500,
         error: "Erro ao remover conta",
