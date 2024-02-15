@@ -161,3 +161,18 @@ it("Deve retornar um erro caso não consiga recuperar a lista de contas", () => 
       expect(res.body.error).toBe("Erro ao recuperar contas");
     });
 });
+
+it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
+  const dbFindOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(accDb, "findOne").mockImplementation(dbFindOneMock);
+
+  return request(app)
+    .get("/account/1234555412342314")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao recuperar conta");
+    });
+});
