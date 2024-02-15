@@ -4,6 +4,7 @@ const userDb = require("../../src/models/users");
 const accDb = require("../../src/models/accounts");
 
 let user;
+let userId;
 
 const mockCpf = () => {
   const randomNumber = () => Math.floor(Math.random() * 10);
@@ -33,6 +34,8 @@ beforeEach(() => {
     passwd: "12345",
     seller: true,
   };
+
+  userId = Date.now().toString();
 });
 
 it("Deve criar uma nova conta", () => {
@@ -61,8 +64,6 @@ it("Deve retornar uma lista de contas", () => {
 });
 
 it("Deve retornar uma conta por id", () => {
-  const userId = Date.now().toString();
-
   return accDb.create({ userId }).then((r) => {
     return request(app)
       .get(`/account/${r.id}`)
@@ -74,13 +75,15 @@ it("Deve retornar uma conta por id", () => {
 });
 
 it("Deve alterar uma conta por id", () => {
-  return request(app)
-    .put("/account/1")
-    .send({ balance: 100 })
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.balance).toBe(100);
-    });
+  return accDb.create({ userId }).then((r) => {
+    return request(app)
+      .put(`/account/${r.id}`)
+      .send({ balance: 100 })
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe("Conta alterada com sucesso");
+      });
+  });
 });
 
 it("Deve remover um conta por id", () => {
