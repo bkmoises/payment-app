@@ -76,6 +76,19 @@ it("Não deve criar uma conta com userId repetido", () => {
   });
 });
 
+it("Não deve criar uam conta para usuário inativo", () => {
+  user.status = false;
+  return userDb.create(user).then((r) => {
+    return request(app)
+      .post("/account")
+      .send({ userId: r.id })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe("O usuário informado está inativo");
+      });
+  });
+});
+
 it("Não deve criar uma conta para usuário um usuário não cadastrado", () => {
   return request(app)
     .post("/account")
