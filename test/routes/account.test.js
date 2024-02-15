@@ -146,3 +146,18 @@ it("Deve retornar um erro caso não consiga criar uma conta", () => {
       });
   });
 });
+
+it("Deve retornar um erro caso não consiga recuperar a lista de contas", () => {
+  const dbFindMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(accDb, "find").mockImplementation(dbFindMock);
+
+  return request(app)
+    .get("/account")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao recuperar contas");
+    });
+});
