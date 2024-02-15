@@ -1,14 +1,15 @@
 const accDb = require("../models/accounts");
+const accountService = require("../services/accountService");
 
 module.exports = {
   createAccount: async (req, res) => {
     const { userId } = req.body;
+    const { account, statusCode, error } =
+      await accountService.createAccount(userId);
 
-    if (!userId)
-      return res.status(400).json({ error: "O campo userId é requerido" });
-    const newAccount = await accDb.create({ userId });
+    if (error) return res.status(statusCode).json({ error });
 
-    return res.status(201).json(newAccount);
+    return res.status(statusCode).json(account);
   },
 
   getAllAccounts: async (_req, res) => {
