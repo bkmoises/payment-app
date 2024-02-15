@@ -12,4 +12,9 @@ module.exports = {
   getOneAccount: async (req, res) => {
     return res.status(200).json({ userId: 1 });
   },
+
+  updateOneAccount: async (req, res) => {
+    const { balance } = req.body;
+    return res.status(200).json({ userId: 1, balance });
+  },
 };
