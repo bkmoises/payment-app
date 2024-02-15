@@ -9,6 +9,15 @@ module.exports = {
       };
     }
 
+    const existingAccount = await accDb.findOne({ userId });
+
+    if (existingAccount) {
+      return {
+        statusCode: 400,
+        error: "Usuário já possui uma conta",
+      };
+    }
+
     const account = await accDb.create({ userId });
 
     return {
