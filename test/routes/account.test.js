@@ -98,6 +98,15 @@ it("Deve retornar uma conta por id", () => {
   });
 });
 
+it("Não deve retornar uma conta caso o ID não exista no banco", () => {
+  return request(app)
+    .get("/account/65cd5d0fa30a48596f000000")
+    .then((res) => {
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe("Usuário não encontrado");
+    });
+});
+
 it("Deve alterar uma conta por id", () => {
   return accDb.create({ userId }).then((r) => {
     return request(app)
