@@ -28,6 +28,8 @@ module.exports = {
   },
 
   deleteOneAccount: async (req, res) => {
+    const { id } = req.params;
+    await accDb.deleteOne({ _id: id });
     return res.status(204).json();
   },
 };
