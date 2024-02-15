@@ -69,7 +69,7 @@ it("Não deve criar uma conta com userId repetido", () => {
         .send({ userId: r.id })
         .then((res) => {
           expect(res.status).toBe(400);
-          expect(res.body.error).toBe("Usuário já possui uma conta");
+          expect(res.body.error).toBe("Este usuário já possui uma conta");
         });
     });
   });
@@ -103,7 +103,7 @@ it("Não deve retornar uma conta caso o ID não exista no banco", () => {
     .get("/account/65cd5d0fa30a48596f000000")
     .then((res) => {
       expect(res.status).toBe(404);
-      expect(res.body.error).toBe("Usuário não encontrado");
+      expect(res.body.error).toBe("Conta não encontrada");
     });
 });
 
@@ -142,7 +142,7 @@ it("Deve retornar um erro caso não consiga criar uma conta", () => {
       .send({ userId: r.id })
       .then((res) => {
         expect(res.status).toBe(500);
-        expect(res.body.error).toBe("Erro ao criar usuário");
+        expect(res.body.error).toBe("Erro ao criar conta");
       });
   });
 });
@@ -170,7 +170,7 @@ it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
   jest.spyOn(accDb, "findOne").mockImplementation(dbFindOneMock);
 
   return request(app)
-    .get("/account/1234555412342314")
+    .get("/account/65cd5d0fa30a48596f000000")
     .then((res) => {
       expect(res.status).toBe(500);
       expect(res.body.error).toBe("Erro ao recuperar conta");
