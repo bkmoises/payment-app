@@ -11,8 +11,9 @@ module.exports = {
   },
 
   getAllAccounts: async (_req, res) => {
-    const { accountList, statusCode } = await accountService.getAllAccounts();
-    return res.status(statusCode).json(accountList);
+    const { accountList, statusCode, error } =
+      await accountService.getAllAccounts();
+    return res.status(statusCode).json(accountList || { error });
   },
 
   getOneAccount: async (req, res) => {

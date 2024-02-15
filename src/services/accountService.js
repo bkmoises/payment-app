@@ -37,12 +37,19 @@ module.exports = {
   },
 
   getAllAccounts: async () => {
-    const accountList = await accDb.find();
+    try {
+      const accountList = await accDb.find();
 
-    return {
-      statusCode: 200,
-      accountList,
-    };
+      return {
+        statusCode: 200,
+        accountList,
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao recuperar contas",
+      };
+    }
   },
 
   getOneAccount: async (id) => {
