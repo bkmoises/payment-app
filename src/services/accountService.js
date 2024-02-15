@@ -2,28 +2,35 @@ const accDb = require("../models/accounts");
 
 module.exports = {
   createAccount: async (userId) => {
-    if (!userId) {
+    try {
+      if (!userId) {
+        return {
+          statusCode: 400,
+          error: "O campo userId é requerido",
+        };
+      }
+
+      const existingAccount = await accDb.findOne({ userId });
+
+      if (existingAccount) {
+        return {
+          statusCode: 400,
+          error: "Usuário já possui uma conta",
+        };
+      }
+
+      const account = await accDb.create({ userId });
+
       return {
-        statusCode: 400,
-        error: "O campo userId é requerido",
+        statusCode: 201,
+        account,
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao criar usuário",
       };
     }
-
-    const existingAccount = await accDb.findOne({ userId });
-
-    if (existingAccount) {
-      return {
-        statusCode: 400,
-        error: "Usuário já possui uma conta",
-      };
-    }
-
-    const account = await accDb.create({ userId });
-
-    return {
-      statusCode: 201,
-      account,
-    };
   },
 
   getAllAccounts: async () => {
