@@ -176,3 +176,19 @@ it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
       expect(res.body.error).toBe("Erro ao recuperar conta");
     });
 });
+
+it("Deve retornar um erro caso não consiga ataulizar uma conta", () => {
+  const dbUpdateOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(accDb, "updateOne").mockImplementation(dbUpdateOneMock);
+
+  return request(app)
+    .put("/account/65cd5d0fa30a48596f000000")
+    .send({ balance: 100, status: false })
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao atualizar dados da conta");
+    });
+});
