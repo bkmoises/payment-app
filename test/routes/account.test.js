@@ -57,11 +57,21 @@ it("Deve retornar uma lista de contas", () => {
     });
 });
 
-it("Deve retornar uma conta", () => {
+it("Deve retornar uma conta por id", () => {
   return request(app)
     .get("/account/1")
     .then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.userId).toBe(1);
+    });
+});
+
+it("Deve alterar uma conta por id", () => {
+  return request(app)
+    .put("/account/1")
+    .send({ balance: 100 })
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.balance).toBe(100);
     });
 });
