@@ -9,7 +9,7 @@ module.exports = {
       };
     }
 
-    const account = await accDb.create(userId);
+    const account = await accDb.create({ userId });
 
     return {
       statusCode: 201,
@@ -33,5 +33,19 @@ module.exports = {
       statusCode: 200,
       account,
     };
+  },
+
+  updateOneAccount: async (id, data) => {
+    await accDb.updateOne(id, data);
+    return {
+      statusCode: 200,
+      message: "Conta alterada com sucesso",
+    };
+  },
+
+  deleteOneAccount: async (id) => {
+    await accDb.deleteOne({ _id: id });
+
+    return { statusCode: 204 };
   },
 };

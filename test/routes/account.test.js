@@ -51,7 +51,7 @@ it("Deve criar uma nova conta", () => {
   });
 });
 
-it.only("Não deve criar uma conta sem userId", () => {
+it("Não deve criar uma conta sem userId", () => {
   return request(app)
     .post("/account")
     .send({ userId: "" })

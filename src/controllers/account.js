@@ -29,13 +29,16 @@ module.exports = {
     const { id } = req.params;
     const { balance, status } = req.body;
 
-    await accDb.updateOne({ _id: id }, { balance, status });
-    return res.status(200).json({ message: "Conta alterada com sucesso" });
+    const { message, statusCode } = await accountService.updateOneAccount(
+      { _id: id },
+      { balance, status },
+    );
+    return res.status(statusCode).json({ message });
   },
 
   deleteOneAccount: async (req, res) => {
     const { id } = req.params;
-    await accDb.deleteOne({ _id: id });
-    return res.status(204).json();
+    const { statusCode } = await accountService.deleteOneAccount({ _id: id });
+    return res.status(statusCode).json();
   },
 };
