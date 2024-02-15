@@ -20,8 +20,11 @@ module.exports = {
   },
 
   updateOneAccount: async (req, res) => {
-    const { balance } = req.body;
-    return res.status(200).json({ userId: 1, balance });
+    const { id } = req.params;
+    const { balance, status } = req.body;
+
+    await accDb.updateOne({ _id: id }, { balance, status });
+    return res.status(200).json({ message: "Conta alterada com sucesso" });
   },
 
   deleteOneAccount: async (req, res) => {
