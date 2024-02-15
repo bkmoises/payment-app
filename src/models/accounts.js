@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const AccountSchema = new mongoose.Schema({
+const accountSchema = new mongoose.Schema({
   userId: {
     type: String,
     unique: true,
@@ -22,4 +22,4 @@ const AccountSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("accounts", AccountSchema);
+module.exports = mongoose.model("accounts", accountSchema);
