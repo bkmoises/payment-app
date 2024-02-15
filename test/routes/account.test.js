@@ -75,3 +75,12 @@ it("Deve alterar uma conta por id", () => {
       expect(res.body.balance).toBe(100);
     });
 });
+
+it("Deve remover um conta por id", () => {
+  return request(app)
+    .delete("/account/1")
+    .send({ id: 1 })
+    .then((res) => {
+      expect(res.status).toBe(204);
+    });
+});
