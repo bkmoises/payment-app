@@ -56,3 +56,12 @@ it("Deve retornar uma lista de contas", () => {
       expect(res.body[0]).toHaveProperty("balance", 0);
     });
 });
+
+it("Deve retornar uma conta", () => {
+  return request(app)
+    .get("/account/1")
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.userId).toBe(1);
+    });
+});
