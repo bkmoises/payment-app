@@ -92,8 +92,15 @@ module.exports = {
   },
 
   deleteOneAccount: async (id) => {
-    await accDb.deleteOne({ _id: id });
+    try {
+      await accDb.deleteOne({ _id: id });
 
-    return { statusCode: 204 };
+      return { statusCode: 204 };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao remover conta",
+      };
+    }
   },
 };

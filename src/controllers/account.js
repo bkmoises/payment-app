@@ -37,7 +37,9 @@ module.exports = {
 
   deleteOneAccount: async (req, res) => {
     const { id } = req.params;
-    const { statusCode } = await accountService.deleteOneAccount({ _id: id });
-    return res.status(statusCode).json();
+    const { statusCode, error } = await accountService.deleteOneAccount({
+      _id: id,
+    });
+    return res.status(statusCode).json({ error });
   },
 };
