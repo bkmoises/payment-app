@@ -9,6 +9,6 @@ router
 router
   .route("/:id")
   .get(transactionController.getTransactionById)
-  .post(transactionController.revertTransaction);
+  .put(transactionController.revertTransaction);
 
 module.exports = router;
