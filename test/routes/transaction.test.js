@@ -60,3 +60,13 @@ it("Um usuário deve transferir dinheiro para outro usuário", () => {
       expect(res.body.value).toBe(500);
     });
 });
+
+it("Deve retornar todas as transações", () => {
+  return request(app)
+    .get("/transaction")
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBeGreaterThan(0);
+      expect(res.body[0]).toHaveProperty("transactionId");
+    });
+});
