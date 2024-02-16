@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../../src/app");
 const dbUser = require("../../src/models/users");
 const dbAccount = require("../../src/models/accounts");
+const dbTrans = require("../../src/models/transaction");
 const mockCpf = require("../helpers/cpfGenerator");
 
 let users, payer, payee, payerAccount, payeeAccount;
@@ -55,11 +56,16 @@ it("Deve retornar todas as transações", () => {
 });
 
 it("Deve retornar uma transação por ID", () => {
-  return request(app)
-    .get("/transaction/1")
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.transactionId).toBe("1");
+  return dbTrans
+    .create({ payer: payer.id, payee: payee.id, value: 100 })
+    .then((r) => {
+      return request(app)
+        .get(`/transaction/${r.id}`)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body._id).toBe(r.id);
+          expect(res.body.value).toBe(100);
+        });
     });
 });
 
