@@ -17,4 +17,9 @@ module.exports = {
     const { id } = req.params;
     return res.status(200).json({ transactionId: id });
   },
+
+  revertTransaction: async (req, res) => {
+    const { id } = req.params;
+    return res.status(200).json({ transactionId: id, reverted: true });
+  },
 };
