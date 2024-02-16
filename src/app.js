@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const user = require("./routes/user");
 const account = require("./routes/account");
+const transaction = require("./routes/transaction");
 
 const app = express();
 const connectionString = process.env.CONNECTIONSTRING;
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/user", user);
 app.use("/account", account);
+app.use("/transaction", transaction);
 
 mongoose.connect(connectionString);
 
