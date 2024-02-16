@@ -17,7 +17,8 @@ module.exports = {
 
   getTransactionById: async (req, res) => {
     const { id } = req.params;
-    return res.status(200).json({ transactionId: id });
+    const transaction = await dbTrans.findOne({ _id: id });
+    return res.status(200).json(transaction);
   },
 
   revertTransaction: async (req, res) => {
