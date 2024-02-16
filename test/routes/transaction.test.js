@@ -57,7 +57,7 @@ it("Um usuário deve transferir dinheiro para outro usuário", () => {
   });
 });
 
-it("um vendedor não deve transferir dinheiro para um usuário", () => {
+it("Um vendedor não deve transferir dinheiro para um usuário", () => {
   return dbUser.updateOne({ _id: payer.id }, { seller: true }).then(() => {
     return request(app)
       .post("/transaction")
@@ -67,6 +67,16 @@ it("um vendedor não deve transferir dinheiro para um usuário", () => {
         expect(res.body.error).toBe("Operação não permitida");
       });
   });
+});
+
+it("Deve verificar saldo antes de enviar dinheiro", () => {
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 100.5 })
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("Saldo insuficiente");
+    });
 });
 
 it("Deve retornar todas as transações", () => {
