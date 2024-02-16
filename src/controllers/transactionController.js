@@ -11,9 +11,8 @@ module.exports = {
   },
 
   getAllTransactions: async (_req, res) => {
-    return res
-      .status(200)
-      .json([{ transactionId: 1, payer: 1, payee: 1, value: 0 }]);
+    const transactionList = await dbTrans.find();
+    return res.status(200).json(transactionList);
   },
 
   getTransactionById: async (req, res) => {
