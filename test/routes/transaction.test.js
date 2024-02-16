@@ -70,11 +70,14 @@ it("Deve retornar uma transação por ID", () => {
 });
 
 it("Deve reverter uma transação", () => {
-  return request(app)
-    .post("/transaction/1")
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.transactionId).toBe("1");
-      expect(res.body.reverted).toBe(true);
+  return dbTrans
+    .create({ payer: payer.id, payee: payee.id, value: 100 })
+    .then((r) => {
+      return request(app)
+        .put(`/transaction/${r.id}`)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.message).toBe("Transação revertida com sucesso");
+        });
     });
 });
