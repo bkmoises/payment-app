@@ -1,10 +1,13 @@
+const dbTrans = require("../models/transaction");
+
 module.exports = {
   makeTransfer: async (req, res) => {
-    const { value } = req.body;
+    const { payer, payee, value } = req.body;
+    const transaction = { payer, payee, value };
 
-    return res
-      .status(200)
-      .json({ transactionId: 1, payer: 1, payee: 1, value });
+    const newTransaction = await dbTrans.create(transaction);
+
+    return res.status(200).json(newTransaction);
   },
 
   getAllTransactions: async (_req, res) => {
