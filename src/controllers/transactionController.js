@@ -1,9 +1,15 @@
 const dbTrans = require("../models/transaction");
+const dbUser = require("../models/users");
 
 module.exports = {
   makeTransfer: async (req, res) => {
     const { payer, payee, value } = req.body;
     const transaction = { payer, payee, value };
+
+    const isSeller = await dbUser.findOne({ _id: payer });
+
+    if (isSeller.seller)
+      return res.status(400).json({ error: "Operação não permitida" });
 
     const newTransaction = await dbTrans.create(transaction);
 
