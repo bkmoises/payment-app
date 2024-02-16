@@ -70,3 +70,16 @@ it("Deve retornar todas as transações", () => {
       expect(res.body[0]).toHaveProperty("transactionId");
     });
 });
+
+it("Deve retornar uma transação por ID", () => {
+  return request(app)
+    .get("/transaction/1")
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.transactionId).toBe("1");
+    });
+});
+
+it("Deve reverter uma transação", () => {
+  return request(app).post("/transaction/1");
+});
