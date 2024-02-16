@@ -4,31 +4,32 @@ const dbUser = require("../../src/models/users");
 const dbAccount = require("../../src/models/accounts");
 const mockCpf = require("../helpers/cpfGenerator");
 
-// let users, payer, payee, payerAccount, payeeAccount;
-//
-// beforeAll(async () => {
-//   users = [
-//     {
-//       name: `user-${Date.now()}`,
-//       cpf: mockCpf(),
-//       mail: `${Date.now()}@mail.com`,
-//       passwd: "12345",
-//       seller: false,
-//     },
-//     {
-//       name: `user-${Date.now()}`,
-//       cpf: mockCpf(),
-//       mail: `${Date.now()}${Math.random()}@mail.com`,
-//       passwd: "12345",
-//       seller: true,
-//     },
-//   ];
-//
-//   payer = await dbUser.create(users[0]);
-//   payerAccount = await dbAccount.create({ userId: payer.id, balance: 100 });
-//   payee = await dbUser.create(users[1]);
-//   payeeAccount = await dbAccount.create({ userId: payee.id, balance: 100 });
-// });
+let users, payer, payee, payerAccount, payeeAccount;
+
+beforeAll(async () => {
+  users = [
+    {
+      name: `user-${Date.now()}`,
+      cpf: mockCpf(),
+      mail: `${Date.now()}@mail.com`,
+      passwd: "12345",
+      seller: false,
+    },
+    {
+      name: `user-${Date.now()}`,
+      cpf: mockCpf(),
+      mail: `${Date.now()}${Math.random()}@mail.com`,
+      passwd: "12345",
+      seller: true,
+    },
+  ];
+
+  payer = await dbUser.create(users[0]);
+  payerAccount = await dbAccount.create({ userId: payer.id, balance: 100 });
+  payee = await dbUser.create(users[1]);
+  payeeAccount = await dbAccount.create({ userId: payee.id, balance: 100 });
+});
+
 //
 // it("Um usuário deve transferir dinheiro para outro usuário", () => {
 //   const payload = {
@@ -54,10 +55,12 @@ const mockCpf = require("../helpers/cpfGenerator");
 it("Um usuário deve transferir dinheiro para outro usuário", () => {
   return request(app)
     .post("/transaction")
-    .send({ value: 500 })
+    .send({ payer: payer.id, payee: payee.id, value: 100 })
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.value).toBe(500);
+      expect(res.body.value).toBe(100);
+      expect(res.body.payer).toBe(payer.id);
+      expect(res.body.payee).toBe(payee.id);
     });
 });
 
