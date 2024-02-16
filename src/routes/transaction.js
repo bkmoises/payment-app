@@ -6,4 +6,6 @@ router
   .post(transactionController.makeTransfer)
   .get(transactionController.getAllTransactions);
 
+router.route("/:id").get(transactionController.getTransactionById);
+
 module.exports = router;
