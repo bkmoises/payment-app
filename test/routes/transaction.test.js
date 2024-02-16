@@ -30,28 +30,6 @@ beforeAll(async () => {
   payeeAccount = await dbAccount.create({ userId: payee.id, balance: 100 });
 });
 
-//
-// it("Um usuário deve transferir dinheiro para outro usuário", () => {
-//   const payload = {
-//     value: 100.0,
-//     payer: payerAccount.id,
-//     payee: payeeAccount.id,
-//   };
-//
-//   return request(app)
-//     .post("/transaction")
-//     .send(payload)
-//     .then((r) => {
-//       return dbAccount
-//         .find({ _id: { $in: [payload.payer, payload.payee] } })
-//         .then((res) => {
-//           console.log(res[0]);
-//           console.log(res[1]);
-//         });
-//     });
-// });
-//
-
 it("Um usuário deve transferir dinheiro para outro usuário", () => {
   return request(app)
     .post("/transaction")
@@ -70,7 +48,9 @@ it("Deve retornar todas as transações", () => {
     .then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty("transactionId");
+      expect(res.body[0]).toHaveProperty("payer");
+      expect(res.body[0]).toHaveProperty("payee");
+      expect(res.body[0]).toHaveProperty("value");
     });
 });
 
