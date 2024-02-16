@@ -23,6 +23,7 @@ module.exports = {
 
   revertTransaction: async (req, res) => {
     const { id } = req.params;
-    return res.status(200).json({ transactionId: id, reverted: true });
+    await dbTrans.updateOne({ _id: id }, { reverted: true });
+    return res.status(200).json({ message: "Transação revertida com sucesso" });
   },
 };
