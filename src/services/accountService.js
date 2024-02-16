@@ -1,11 +1,11 @@
 const userDb = require("../models/users");
-const accDb = require("../models/accounts");
+const accountDb = require("../models/accounts");
 
 module.exports = {
   createAccount: async (userId) => {
     try {
       // Verifica se o userId foi fornecido
-      if (!userId._id) {
+      if (!userId) {
         return {
           statusCode: 400,
           error: "O campo userId é requerido",
@@ -13,7 +13,7 @@ module.exports = {
       }
 
       // Verifica se existe um usuário com o ID informado
-      const existingUser = await userDb.findOne(userId);
+      const existingUser = await userDb.findOne({ _id: userId });
       if (!existingUser) {
         return {
           statusCode: 400,
@@ -30,7 +30,7 @@ module.exports = {
       }
 
       // Verifica se o usuário já possui uma conta
-      const existingAccount = await accDb.findOne({ userId });
+      const existingAccount = await accountDb.findOne({ userId });
       if (existingAccount) {
         return {
           statusCode: 400,
@@ -39,7 +39,7 @@ module.exports = {
       }
 
       // Cria uma nova conta para o usuário
-      const account = await accDb.create(userId);
+      const account = await accountDb.create({ userId });
 
       // Em caso de sucesso, retorna uma nova conta
       return {
@@ -58,7 +58,7 @@ module.exports = {
   getAllAccounts: async () => {
     try {
       // Obtém a lista de todas as contas
-      const accountList = await accDb.find();
+      const accountList = await accountDb.find();
 
       // Em caso de sucesso retorna uma lista de contas
       return {
@@ -77,7 +77,7 @@ module.exports = {
   getOneAccount: async (id) => {
     try {
       // Procura a conta pelo ID
-      const account = await accDb.findOne(id);
+      const account = await accountDb.findOne(id);
       // Se a conta não for encontrada, retorna um status 404
       if (!account) {
         return {
@@ -102,7 +102,7 @@ module.exports = {
   updateOneAccount: async (id, data) => {
     try {
       // Atualiza os dados da conta com o ID fornecido
-      await accDb.updateOne(id, data);
+      await accountDb.updateOne(id, data);
       // Retorna uma mensagem de sucesso
       return {
         statusCode: 200,
@@ -120,7 +120,7 @@ module.exports = {
   deleteOneAccount: async (id) => {
     try {
       // Remove a conta com o ID fornecido
-      await accDb.deleteOne(id);
+      await accountDb.deleteOne(id);
       // Retorna um status de sucesso sem conteúdo
       return { statusCode: 204 };
     } catch (error) {
