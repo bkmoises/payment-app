@@ -81,5 +81,11 @@ it("Deve retornar uma transação por ID", () => {
 });
 
 it("Deve reverter uma transação", () => {
-  return request(app).post("/transaction/1");
+  return request(app)
+    .post("/transaction/1")
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.transactionId).toBe("1");
+      expect(res.body.reverted).toBe(true);
+    });
 });
