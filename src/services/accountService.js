@@ -5,7 +5,7 @@ module.exports = {
   createAccount: async (userId) => {
     try {
       // Verifica se o userId foi fornecido
-      if (!userId) {
+      if (!userId._id) {
         return {
           statusCode: 400,
           error: "O campo userId é requerido",
@@ -13,7 +13,7 @@ module.exports = {
       }
 
       // Verifica se existe um usuário com o ID informado
-      const existingUser = await userDb.findOne({ _id: userId });
+      const existingUser = await userDb.findOne(userId);
       if (!existingUser) {
         return {
           statusCode: 400,
@@ -39,7 +39,7 @@ module.exports = {
       }
 
       // Cria uma nova conta para o usuário
-      const account = await accDb.create({ userId });
+      const account = await accDb.create(userId);
 
       // Em caso de sucesso, retorna uma nova conta
       return {
@@ -77,7 +77,7 @@ module.exports = {
   getOneAccount: async (id) => {
     try {
       // Procura a conta pelo ID
-      const account = await accDb.findOne({ _id: id });
+      const account = await accDb.findOne(id);
       // Se a conta não for encontrada, retorna um status 404
       if (!account) {
         return {
@@ -120,7 +120,7 @@ module.exports = {
   deleteOneAccount: async (id) => {
     try {
       // Remove a conta com o ID fornecido
-      await accDb.deleteOne({ _id: id });
+      await accDb.deleteOne(id);
       // Retorna um status de sucesso sem conteúdo
       return { statusCode: 204 };
     } catch (error) {

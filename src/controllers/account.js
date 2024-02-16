@@ -4,8 +4,9 @@ module.exports = {
   createAccount: async (req, res) => {
     const { userId } = req.body;
     // Chama o serviço para criar uma conta
-    const { account, statusCode, error } =
-      await accountService.createAccount(userId);
+    const { account, statusCode, error } = await accountService.createAccount({
+      _id: userId,
+    });
 
     // Constrói a resposta com base no resultado da criação da conta
     return res.status(statusCode).json(account || { error });

@@ -23,6 +23,7 @@ module.exports = {
       // Verifica se o CPF ou o e-mail já estão cadastrados
       const { cpf, mail } = user;
       const existingUser = await dbUser.findOne({ $or: [{ cpf }, { mail }] });
+
       // Verifica se o CPF ou o e-mail já estão cadastrados
       if (existingUser) {
         if (existingUser.cpf === cpf) {
@@ -85,7 +86,7 @@ module.exports = {
   getUser: async (id) => {
     try {
       // Consulta ao banco de dados para obter o usuário com o ID fornecido
-      const user = await dbUser.findOne({ _id: id });
+      const user = await dbUser.findOne(id);
 
       // Verifica se o usuário foi encontrado
       if (!user) {
@@ -142,7 +143,7 @@ module.exports = {
   deleteUser: async (id) => {
     try {
       // Exclui o usuário do banco de dados
-      await dbUser.deleteOne({ _id: id });
+      await dbUser.deleteOne(id);
 
       // Retorna um status de sucesso
       return { statusCode: 204 };
