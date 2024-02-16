@@ -7,7 +7,7 @@ const mockCpf = require("../helpers/cpfGenerator");
 
 let users, payer, payee, payerAccount, payeeAccount;
 
-beforeAll(async () => {
+beforeEach(async () => {
   users = [
     {
       name: `user-${Date.now()}`,
@@ -31,7 +31,7 @@ beforeAll(async () => {
   payeeAccount = await dbAccount.create({ userId: payee.id, balance: 100 });
 });
 
-it("Um usuário deve transferir dinheiro para outro usuário", () => {
+it("Um usuário deve transferir dinheiro para um vendedor", () => {
   return request(app)
     .post("/transaction")
     .send({ payer: payer.id, payee: payee.id, value: 100 })
@@ -41,6 +41,31 @@ it("Um usuário deve transferir dinheiro para outro usuário", () => {
       expect(res.body.payer).toBe(payer.id);
       expect(res.body.payee).toBe(payee.id);
     });
+});
+
+it("Um usuário deve transferir dinheiro para outro usuário", () => {
+  payee.seller = false;
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 100 })
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.value).toBe(100);
+      expect(res.body.payer).toBe(payer.id);
+      expect(res.body.payee).toBe(payee.id);
+    });
+});
+
+it("Um vendedor não deve transferir dinheiro para um usuário", () => {
+  return dbUser.updateOne({ _id: payer.id }, { seller: true }).then(() => {
+    return request(app)
+      .post("/transaction")
+      .send({ payer: payer.id, payee: payee.id, value: 100 })
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe("Operação não permitida");
+      });
+  });
 });
 
 it("Deve retornar todas as transações", () => {
