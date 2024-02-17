@@ -3,6 +3,7 @@ const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
 
 const transactionService = require("../services/transactionService");
+const transaction = require("../models/transaction");
 
 module.exports = {
   makeTransfer: async (req, res) => {
@@ -36,27 +37,20 @@ module.exports = {
 
   getTransactionById: async (req, res) => {
     const { id } = req.params;
-    const transaction = await dbTrans.findOne({ _id: id });
-    return res.status(200).json(transaction);
+    const { transaction, statusCode } = await transactionService.getTransaction(
+      { _id: id },
+    );
+
+    return res.status(statusCode).json(transaction);
   },
 
   revertTransaction: async (req, res) => {
     const { id } = req.params;
-    const { payer, payee, value } = await dbTrans.findOne({ _id: id });
 
-    const { balance: prBalance } = await dbAccount.findOne({ userId: payer });
-    const { balance: peBalance } = await dbAccount.findOne({ userId: payee });
+    const { statusCode, message } = await transactionService.revertTransaction({
+      _id: id,
+    });
 
-    await dbAccount.updateOne(
-      { userId: payer },
-      { balance: prBalance + value },
-    );
-    await dbAccount.updateOne(
-      { userId: payee },
-      { balance: peBalance - value },
-    );
-
-    await dbTrans.updateOne({ _id: id }, { reverted: true });
-    return res.status(200).json({ message: "Transação revertida com sucesso" });
+    return res.status(statusCode).json({ message });
   },
 };
