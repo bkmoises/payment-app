@@ -1,9 +1,11 @@
+const axios = require("axios");
 const request = require("supertest");
 const app = require("../../src/app");
 const dbUser = require("../../src/models/users");
 const dbAccount = require("../../src/models/accounts");
 const dbTrans = require("../../src/models/transaction");
 const mockCpf = require("../helpers/cpfGenerator");
+const autorizationVerify = require("../../src/middlewares/middleware");
 
 let users, payer, payee, payerAccount, payeeAccount;
 
@@ -76,6 +78,20 @@ it("Deve verificar saldo antes de enviar dinheiro", () => {
     .then((res) => {
       expect(res.status).toBe(400);
       expect(res.body.error).toBe("Saldo insuficiente");
+    });
+});
+
+it("Não deve concluir a transação se a API terceira não autorizar", () => {
+  jest
+    .spyOn(axios, "get")
+    .mockResolvedValueOnce({ data: { message: "Não Autorizado" } });
+
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 100 })
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("Transação não autorizada");
     });
 });
 
