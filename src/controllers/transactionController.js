@@ -40,6 +40,18 @@ module.exports = {
     const { id } = req.params;
     const { payer, payee, value } = await dbTrans.findOne({ _id: id });
 
+    const { balance: prBalance } = await dbAccount.findOne({ userId: payer });
+    const { balance: peBalance } = await dbAccount.findOne({ userId: payee });
+
+    await dbAccount.updateOne(
+      { userId: payer },
+      { balance: prBalance + value },
+    );
+    await dbAccount.updateOne(
+      { userId: payee },
+      { balance: peBalance - value },
+    );
+
     await dbTrans.updateOne({ _id: id }, { reverted: true });
     return res.status(200).json({ message: "Transação revertida com sucesso" });
   },
