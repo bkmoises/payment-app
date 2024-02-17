@@ -2,6 +2,8 @@ const dbTrans = require("../models/transaction");
 const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
 
+const transactionService = require("../services/transactionService");
+
 module.exports = {
   makeTransfer: async (req, res) => {
     const { payer, payee, value } = req.body;
@@ -26,8 +28,10 @@ module.exports = {
   },
 
   getAllTransactions: async (_req, res) => {
-    const transactionList = await dbTrans.find();
-    return res.status(200).json(transactionList);
+    const { transactionList, statusCode } =
+      await transactionService.getTransactions();
+
+    return res.status(statusCode).json(transactionList);
   },
 
   getTransactionById: async (req, res) => {
