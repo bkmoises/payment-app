@@ -81,6 +81,18 @@ it("Deve verificar saldo antes de enviar dinheiro", () => {
     });
 });
 
+it("O saldo do pagador deve ser reduzido", () => {
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 50 })
+    .then((res) => {
+      return dbAccount.findOne({ userId: payer.id }).then((acc) => {
+        expect(res.status).toBe(200);
+        expect(acc.balance).toBe(50);
+      });
+    });
+});
+
 it("Não deve concluir a transação se a API terceira não autorizar", () => {
   jest
     .spyOn(axios, "get")
@@ -129,11 +141,13 @@ it("Deve reverter uma transação", () => {
   return dbTrans
     .create({ payer: payer.id, payee: payee.id, value: 50 })
     .then((r) => {
-      return request(app)
-        .put(`/transaction/${r.id}`)
-        .then((res) => {
-          expect(res.status).toBe(200);
-          expect(res.body.message).toBe("Transação revertida com sucesso");
-        });
+      return dbTrans.findOne({ _id: r.id }).then((res) => {
+        return request(app)
+          .put(`/transaction/${r.id}`)
+          .then((res) => {
+            expect(res.status).toBe(200);
+            expect(res.body.message).toBe("Transação revertida com sucesso");
+          });
+      });
     });
 });
