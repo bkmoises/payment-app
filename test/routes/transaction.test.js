@@ -93,6 +93,18 @@ it("O saldo do pagador deve ser reduzido", () => {
     });
 });
 
+it("O saldo do recebidor deve ser acrescido", () => {
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 50 })
+    .then((res) => {
+      return dbAccount.findOne({ userId: payee.id }).then((acc) => {
+        expect(res.status).toBe(200);
+        expect(acc.balance).toBe(150);
+      });
+    });
+});
+
 it("Não deve concluir a transação se a API terceira não autorizar", () => {
   jest
     .spyOn(axios, "get")
