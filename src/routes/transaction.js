@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const transactionController = require("../controllers/transactionController.js");
+const autorizationVerify = require("../middlewares/middleware");
+const transactionController = require("../controllers/transactionController");
 
 router
   .route("/")
-  .post(transactionController.makeTransfer)
+  .post(autorizationVerify, transactionController.makeTransfer)
   .get(transactionController.getAllTransactions);
 
 router
