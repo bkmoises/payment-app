@@ -36,10 +36,10 @@ beforeEach(async () => {
 it("Um usuário deve transferir dinheiro para um vendedor", () => {
   return request(app)
     .post("/transaction")
-    .send({ payer: payer.id, payee: payee.id, value: 100 })
+    .send({ payer: payer.id, payee: payee.id, value: 50 })
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.value).toBe(100);
+      expect(res.body.value).toBe(50);
       expect(res.body.payer).toBe(payer.id);
       expect(res.body.payee).toBe(payee.id);
     });
@@ -49,10 +49,10 @@ it("Um usuário deve transferir dinheiro para outro usuário", () => {
   return dbUser.updateOne({ _id: payee.id }, { seller: false }).then(() => {
     return request(app)
       .post("/transaction")
-      .send({ payer: payer.id, payee: payee.id, value: 100 })
+      .send({ payer: payer.id, payee: payee.id, value: 50 })
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.body.value).toBe(100);
+        expect(res.body.value).toBe(50);
         expect(res.body.payer).toBe(payer.id);
         expect(res.body.payee).toBe(payee.id);
       });
@@ -63,7 +63,7 @@ it("Um vendedor não deve transferir dinheiro para um usuário", () => {
   return dbUser.updateOne({ _id: payer.id }, { seller: true }).then(() => {
     return request(app)
       .post("/transaction")
-      .send({ payer: payer.id, payee: payee.id, value: 100 })
+      .send({ payer: payer.id, payee: payee.id, value: 50 })
       .then((res) => {
         expect(res.status).toBe(400);
         expect(res.body.error).toBe("Operação não permitida");
@@ -88,7 +88,7 @@ it("Não deve concluir a transação se a API terceira não autorizar", () => {
 
   return request(app)
     .post("/transaction")
-    .send({ payer: payer.id, payee: payee.id, value: 100 })
+    .send({ payer: payer.id, payee: payee.id, value: 50 })
     .then((res) => {
       expect(res.status).toBe(400);
       expect(res.body.error).toBe("Transação não autorizada");
@@ -96,34 +96,38 @@ it("Não deve concluir a transação se a API terceira não autorizar", () => {
 });
 
 it("Deve retornar todas as transações", () => {
-  return request(app)
-    .get("/transaction")
-    .then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty("payer");
-      expect(res.body[0]).toHaveProperty("payee");
-      expect(res.body[0]).toHaveProperty("value");
+  return dbTrans
+    .create({ payer: payer.id, payee: payee.id, value: 50 })
+    .then(() => {
+      return request(app)
+        .get("/transaction")
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.length).toBeGreaterThan(0);
+          expect(res.body[0]).toHaveProperty("payer");
+          expect(res.body[0]).toHaveProperty("payee");
+          expect(res.body[0]).toHaveProperty("value");
+        });
     });
 });
 
 it("Deve retornar uma transação por ID", () => {
   return dbTrans
-    .create({ payer: payer.id, payee: payee.id, value: 100 })
+    .create({ payer: payer.id, payee: payee.id, value: 50 })
     .then((r) => {
       return request(app)
         .get(`/transaction/${r.id}`)
         .then((res) => {
           expect(res.status).toBe(200);
           expect(res.body._id).toBe(r.id);
-          expect(res.body.value).toBe(100);
+          expect(res.body.value).toBe(50);
         });
     });
 });
 
 it("Deve reverter uma transação", () => {
   return dbTrans
-    .create({ payer: payer.id, payee: payee.id, value: 100 })
+    .create({ payer: payer.id, payee: payee.id, value: 50 })
     .then((r) => {
       return request(app)
         .put(`/transaction/${r.id}`)
