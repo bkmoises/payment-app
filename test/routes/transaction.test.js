@@ -81,7 +81,7 @@ it("Deve verificar saldo antes de enviar dinheiro", () => {
     });
 });
 
-it("O saldo do pagador deve ser reduzido", () => {
+it("O saldo do pagador deve ser reduzido após uma transação", () => {
   return request(app)
     .post("/transaction")
     .send({ payer: payer.id, payee: payee.id, value: 50 })
@@ -93,7 +93,7 @@ it("O saldo do pagador deve ser reduzido", () => {
     });
 });
 
-it("O saldo do recebidor deve ser acrescido", () => {
+it("O saldo do recebidor deve ser acrescido após uma transação", () => {
   return request(app)
     .post("/transaction")
     .send({ payer: payer.id, payee: payee.id, value: 50 })
@@ -162,4 +162,17 @@ it("Deve reverter uma transação", () => {
           });
       });
     });
+});
+
+it("O valor da transação deve ser reconstituido no saldo do pagador e recebidor", async () => {
+  const transaction = await request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 50 });
+  await request(app).put(`/transaction/${transaction.body._id}`);
+
+  const pr = await dbAccount.findOne({ userId: payer.id });
+  const pe = await dbAccount.findOne({ userId: payer.id });
+
+  expect(pr.balance).toBe(100);
+  expect(pe.balance).toBe(100);
 });
