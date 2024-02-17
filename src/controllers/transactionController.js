@@ -19,6 +19,9 @@ module.exports = {
 
     const newTransaction = await dbTrans.create(transaction);
 
+    await dbAccount.updateOne({ userId: payer }, { balance: balance - value });
+    await dbAccount.updateOne({ userId: payee }, { balance: balance + value });
+
     return res.status(200).json(newTransaction);
   },
 
