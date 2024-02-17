@@ -38,6 +38,8 @@ module.exports = {
 
   revertTransaction: async (req, res) => {
     const { id } = req.params;
+    const { payer, payee, value } = await dbTrans.findOne({ _id: id });
+
     await dbTrans.updateOne({ _id: id }, { reverted: true });
     return res.status(200).json({ message: "Transação revertida com sucesso" });
   },
