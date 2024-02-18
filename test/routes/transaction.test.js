@@ -177,6 +177,21 @@ it("O valor da transação deve ser reconstituido no saldo do pagador e recebido
   expect(pe.balance).toBe(100);
 });
 
+it("Deve retornar um erro caso não consiga resgatar uma transação", () => {
+  const dbFindOneMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(dbTrans, "findOne").mockImplementation(dbFindOneMock);
+
+  return request(app)
+    .get("/transaction/123454321")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao resgatar transação");
+    });
+});
+
 it("Deve retornar um erro caso não consiga reverter uma transação", () => {
   const dbUpdateOneMock = jest.fn(() => {
     throw new Error();
