@@ -34,9 +34,7 @@ module.exports = {
     const { id } = req.params;
 
     const { statusCode, message, error } =
-      await transactionService.revertTransaction({
-        _id: id,
-      });
+      await transactionService.revertTransaction({ _id: id });
 
     return res.status(statusCode).json(message ? { message } : { error });
   },

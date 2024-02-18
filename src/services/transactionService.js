@@ -46,6 +46,9 @@ module.exports = {
     try {
       const transaction = await dbTrans.findOne(id);
 
+      if (!transaction)
+        return { statusCode: 400, error: "Transação não encontrada" };
+
       return {
         statusCode: 200,
         transaction,
