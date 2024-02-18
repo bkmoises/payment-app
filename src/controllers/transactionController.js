@@ -8,24 +8,11 @@ const transaction = require("../models/transaction");
 module.exports = {
   makeTransfer: async (req, res) => {
     const { payer, payee, value } = req.body;
-    const transaction = { payer, payee, value };
 
-    const isSeller = await dbUser.findOne({ _id: payer });
+    const { newTransaction, statusCode, error } =
+      await transactionService.createTransaction({ payer, payee, value });
 
-    if (isSeller.seller)
-      return res.status(400).json({ error: "Operação não permitida" });
-
-    const { balance } = await dbAccount.findOne({ userId: payer });
-
-    if (balance < value)
-      return res.status(400).json({ error: "Saldo insuficiente" });
-
-    const newTransaction = await dbTrans.create(transaction);
-
-    await dbAccount.updateOne({ userId: payer }, { balance: balance - value });
-    await dbAccount.updateOne({ userId: payee }, { balance: balance + value });
-
-    return res.status(200).json(newTransaction);
+    return res.status(statusCode).json(newTransaction || { error });
   },
 
   getAllTransactions: async (_req, res) => {
