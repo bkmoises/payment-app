@@ -13,7 +13,7 @@ module.exports = {
       }
 
       // Verifica se existe um usuário com o ID informado
-      const existingUser = await userDb.findOne({ _id: userId });
+      const existingUser = await userDb.findById(userId);
       if (!existingUser) {
         return {
           statusCode: 400,
