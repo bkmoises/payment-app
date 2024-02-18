@@ -34,10 +34,11 @@ module.exports = {
   revertTransaction: async (req, res) => {
     const { id } = req.params;
 
-    const { statusCode, message } = await transactionService.revertTransaction({
-      _id: id,
-    });
+    const { statusCode, message, error } =
+      await transactionService.revertTransaction({
+        _id: id,
+      });
 
-    return res.status(statusCode).json({ message });
+    return res.status(statusCode).json(message ? { message } : { error });
   },
 };
