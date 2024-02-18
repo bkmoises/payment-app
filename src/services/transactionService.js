@@ -43,12 +43,19 @@ module.exports = {
   },
 
   getTransaction: async (id) => {
-    const transaction = await dbTrans.findOne(id);
+    try {
+      const transaction = await dbTrans.findOne(id);
 
-    return {
-      statusCode: 200,
-      transaction,
-    };
+      return {
+        statusCode: 200,
+        transaction,
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        error: "Erro ao resgatar transação",
+      };
+    }
   },
 
   revertTransaction: async (id) => {

@@ -24,11 +24,10 @@ module.exports = {
 
   getTransactionById: async (req, res) => {
     const { id } = req.params;
-    const { transaction, statusCode } = await transactionService.getTransaction(
-      { _id: id },
-    );
+    const { transaction, statusCode, error } =
+      await transactionService.getTransaction({ _id: id });
 
-    return res.status(statusCode).json(transaction);
+    return res.status(statusCode).json(transaction || { error });
   },
 
   revertTransaction: async (req, res) => {
