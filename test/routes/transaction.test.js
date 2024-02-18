@@ -149,6 +149,15 @@ it("Deve retornar uma transação por ID", () => {
     });
 });
 
+it("Deve retornar um erro caso a transação não exista", () => {
+  return request(app)
+    .get("/transaction/65cff9e39c5d8cef70212321")
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("Transação não encontrada");
+    });
+});
+
 it("Deve reverter uma transação", () => {
   return dbTrans
     .create({ payer: payer.id, payee: payee.id, value: 50 })
