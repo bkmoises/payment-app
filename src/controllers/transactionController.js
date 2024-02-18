@@ -16,10 +16,10 @@ module.exports = {
   },
 
   getAllTransactions: async (_req, res) => {
-    const { transactionList, statusCode } =
+    const { transactionList, statusCode, error } =
       await transactionService.getTransactions();
 
-    return res.status(statusCode).json(transactionList);
+    return res.status(statusCode).json(transactionList || { error });
   },
 
   getTransactionById: async (req, res) => {
