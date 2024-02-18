@@ -231,3 +231,18 @@ it("Deve retornar um erro caso não consiga reverter uma transação", () => {
       expect(res.body.error).toBe("Erro ao reverter a transação");
     });
 });
+
+it("Deve retornar um erro caso não consiga realizar uma transação", () => {
+  const dbCreateMock = jest.fn(() => {
+    throw new Error();
+  });
+
+  jest.spyOn(dbTrans, "create").mockImplementation(dbCreateMock);
+
+  return request(app)
+    .post("/transaction")
+    .then((res) => {
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe("Erro ao realizar transação");
+    });
+});
