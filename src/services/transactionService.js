@@ -4,6 +4,35 @@ const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
 
 module.exports = {
+  createTransaction: async (transaction) => {
+    const { payer, payee, value } = transaction;
+
+    const isSeller = await dbUser.findOne({ _id: payer });
+
+    if (isSeller.seller)
+      return {
+        statusCode: 400,
+        error: "Operação não permitida",
+      };
+
+    const { balance } = await dbAccount.findOne({ userId: payer });
+
+    if (balance < value)
+      return {
+        statusCode: 400,
+        error: "Saldo insuficiente",
+      };
+
+    const newTransaction = await dbTrans.create(transaction);
+
+    await dbAccount.updateOne({ userId: payer }, { balance: balance - value });
+    await dbAccount.updateOne({ userId: payee }, { balance: balance + value });
+    return {
+      statusCode: 200,
+      newTransaction,
+    };
+  },
+
   getTransactions: async () => {
     const transactionList = await dbTrans.find();
 
