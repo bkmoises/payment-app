@@ -173,17 +173,19 @@ it("Deve reverter uma transação", () => {
     });
 });
 
-// TODO: Remover requests do teste
 it("O valor da transação deve ser reconstituido no saldo do pagador e recebidor", async () => {
-  const transaction = await request(app)
-    .post("/transaction")
-    .send({ payer: payer.id, payee: payee.id, value: 50 });
-  await request(app).put(`/transaction/${transaction.body._id}`);
+  const transaction = await dbTrans.create({
+    payer: payer.id,
+    payee: payee.id,
+    value: 50,
+  });
+
+  await request(app).put(`/transaction/${transaction.id}`);
 
   const accountList = await dbAccount.find({ userId: [payer.id, payee.id] });
 
-  expect(accountList[0].balance).toBe(100);
-  expect(accountList[1].balance).toBe(100);
+  expect(accountList[0].balance).toBe(150);
+  expect(accountList[1].balance).toBe(50);
 });
 
 it("Deve retornar um erro caso não consiga resgatar uma lista de transações", () => {
