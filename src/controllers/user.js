@@ -8,37 +8,37 @@ module.exports = {
     const user = { name, cpf, mail, passwd, seller };
 
     // Chama o serviço para criar o usuário
-    const { newUser, statusCode, error } = await userService.createUser(user);
+    const { data, statusCode, error } = await userService.createUser(user);
 
     // Verifica se houve algum erro durante a criação do usuário
     if (error) return res.status(statusCode).json({ error });
 
     // Retorna o novo usuário criado
-    return res.status(statusCode).json(newUser);
+    return res.status(statusCode).json(data);
   },
 
   getAllUsers: async (_req, res) => {
     // Chama o serviço para obter todos os usuários
-    const { users, statusCode, error } = await userService.getAllUsers();
+    const { data, statusCode, error } = await userService.getAllUsers();
 
     // Verifica se houve algum erro durante a obtenção dos usuários
     if (error) return res.status(statusCode).json({ error });
 
     // Retorna a lista de usuários
-    return res.status(statusCode).json(users);
+    return res.status(statusCode).json(data);
   },
 
   getUserById: async (req, res) => {
     // Extrai o ID do usuário da requisição
     const { id } = req.params;
     // Chama o serviço para obter o usuário pelo ID
-    const { user, statusCode, error } = await userService.getUser({ _id: id });
+    const { data, statusCode, error } = await userService.getUser({ _id: id });
 
     // Verifica se houve algum erro durante a obtenção do usuário
     if (error) return res.status(statusCode).json({ error });
 
     // Retorna o usuário
-    return res.status(statusCode).json(user);
+    return res.status(statusCode).json(data);
   },
 
   updateOneUser: async (req, res) => {
