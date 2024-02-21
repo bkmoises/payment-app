@@ -1,5 +1,6 @@
 const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
+const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
   /**
@@ -12,12 +13,8 @@ module.exports = {
       const requiredFields = Object.keys(user);
       // Verifica se os campos obrigatórios estão presentes
       for (const field of requiredFields) {
-        if (!user[field]) {
-          return {
-            statusCode: 400,
-            error: `O campo ${field} é requerido`,
-          };
-        }
+        if (!user[field])
+          return HttpResponse.BadRequest(`O campo ${field} é requerido`);
       }
 
       // Verifica se o CPF ou o e-mail já estão cadastrados
@@ -26,32 +23,20 @@ module.exports = {
 
       // Verifica se o CPF ou o e-mail já estão cadastrados
       if (existingUser) {
-        if (existingUser.cpf === cpf) {
-          return {
-            statusCode: 400,
-            error: "CPF já cadastrado no sistema",
-          };
-        }
-        if (existingUser.mail === mail) {
-          return {
-            statusCode: 400,
-            error: "Email já cadastrado no sistema",
-          };
-        }
+        if (existingUser.cpf === cpf)
+          return HttpResponse.BadRequest("CPF já cadastrado no sistema");
+
+        if (existingUser.mail === mail)
+          return HttpResponse.BadRequest("Email já cadastrado no sistema");
       }
+
       // Cria o novo usuário no banco de dados
       const newUser = await dbUser.create(user);
       // Retorna um status de sucesso e o novo usuário
-      return {
-        statusCode: 201,
-        newUser,
-      };
+      return HttpResponse.Created(newUser);
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return {
-        statusCode: 500,
-        error: "Erro ao criar usuário",
-      };
+      return new HttpError("Erro ao criar usuário");
     }
   },
 
@@ -65,16 +50,10 @@ module.exports = {
       const userList = await dbUser.find();
 
       // Retorna os usuários com o status de sucesso
-      return {
-        statusCode: 200,
-        users: userList,
-      };
+      return HttpResponse.Success("Usuários resgatados com sucesso", userList);
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return {
-        statusCode: 500,
-        error: "Erro ao recuperar usuários do banco de dados",
-      };
+      return new HttpError("Erro ao recuperar usuários do banco de dados");
     }
   },
 
@@ -89,24 +68,13 @@ module.exports = {
       const user = await dbUser.findOne(id);
 
       // Verifica se o usuário foi encontrado
-      if (!user) {
-        return {
-          statusCode: 404,
-          error: "Usuário não encontrado",
-        };
-      }
+      if (!user) return HttpResponse.NotFound("Usuário não encontrado");
 
       // Retorna o usuário com o status de sucesso
-      return {
-        statusCode: 200,
-        user,
-      };
+      return HttpResponse.Success("Usuário resgatado com sucesso", user);
     } catch (error) {
       // Em caso de erro desconhecido, retorna um objeto com status de erro e mensagem
-      return {
-        statusCode: 500,
-        error: "Erro ao recuperar usuário",
-      };
+      return new HttpError("Erro ao recuperar usuário");
     }
   },
 
@@ -122,16 +90,10 @@ module.exports = {
       await dbUser.updateOne(id, user);
 
       // Retorna um status de sucesso
-      return {
-        statusCode: 200,
-        message: "Usuário alterado com sucesso",
-      };
+      return HttpResponse.Success("Usuário alterado com sucesso");
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return {
-        statusCode: 500,
-        error: "Erro ao alterar usuário",
-      };
+      return new HttpError("Erro ao alterar usuário");
     }
   },
 
@@ -146,13 +108,10 @@ module.exports = {
       await dbUser.deleteOne(id);
 
       // Retorna um status de sucesso
-      return { statusCode: 204 };
+      return HttpResponse.Deleted();
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return {
-        statusCode: 500,
-        error: "Erro ao excluir usuário",
-      };
+      return new HttpError("Erro ao excluir usuário");
     }
   },
 };
