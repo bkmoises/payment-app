@@ -12,7 +12,7 @@ beforeEach(() => {
   user = {
     name: `user-${Date.now()}`,
     cpf: mockCpf(),
-    mail: `${Date.now()}@mail.com`,
+    mail: `${Date.now()}${Math.random()}@mail.com`,
     passwd: "12345",
     seller: true,
   };
