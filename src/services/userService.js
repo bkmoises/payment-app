@@ -1,5 +1,6 @@
 const dbUser = require("../models/users");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
+const messageHelper = require("../helpers/messages");
 
 module.exports = {
   createUser: async (user) => {
@@ -7,7 +8,7 @@ module.exports = {
       const requiredFields = Object.keys(user);
       for (const field of requiredFields) {
         if (!user[field])
-          return HttpError.badRequest(`O campo ${field} é requerido`);
+          return HttpError.badRequest(messageHelper.isRequired(field));
       }
 
       const { cpf, mail } = user;
@@ -16,17 +17,17 @@ module.exports = {
 
       if (existingUser) {
         if (existingUser.cpf === cpf)
-          return HttpError.badRequest("CPF já cadastrado no sistema");
+          return HttpError.badRequest(messageHelper.cpfAlreadyExist);
 
         if (existingUser.mail === mail)
-          return HttpError.badRequest("Email já cadastrado no sistema");
+          return HttpError.badRequest(messageHelper.emailAlreadyExist);
       }
 
       const newUser = await dbUser.create(user);
 
       return HttpResponse.created(newUser);
     } catch (error) {
-      return HttpError.internal("Erro ao criar usuário");
+      return HttpError.internal(messageHelper.errorToCreateUser);
     }
   },
 
@@ -34,9 +35,9 @@ module.exports = {
     try {
       const userList = await dbUser.find();
 
-      return HttpResponse.success("Usuários resgatados com sucesso", userList);
+      return HttpResponse.success(messageHelper.successGetUsers, userList);
     } catch (error) {
-      return HttpError.internal("Erro ao recuperar usuários do banco de dados");
+      return HttpError.internal(messageHelper.errorToGetUsers);
     }
   },
 
@@ -44,11 +45,11 @@ module.exports = {
     try {
       const user = await dbUser.findOne(id);
 
-      if (!user) return HttpResponse.notFound("Usuário não encontrado");
+      if (!user) return HttpResponse.notFound(messageHelper.userNotFound);
 
-      return HttpResponse.success("Usuário resgatado com sucesso", user);
+      return HttpResponse.success(messageHelper.successGetUser, user);
     } catch (error) {
-      return HttpError.internal("Erro ao recuperar usuário");
+      return HttpError.internal(messageHelper.errorToGetUser);
     }
   },
 
@@ -56,9 +57,9 @@ module.exports = {
     try {
       await dbUser.updateOne(id, user);
 
-      return HttpResponse.success("Usuário alterado com sucesso");
+      return HttpResponse.success(messageHelper.successUpdateUser);
     } catch (error) {
-      return HttpError.internal("Erro ao alterar usuário");
+      return HttpError.internal(messageHelper.errorToUpdateUser);
     }
   },
 
@@ -68,7 +69,7 @@ module.exports = {
 
       return HttpResponse.deleted();
     } catch (error) {
-      return HttpError.internal("Erro ao excluir usuário");
+      return HttpError.internal(messageHelper.errorToDeleteUser);
     }
   },
 };
