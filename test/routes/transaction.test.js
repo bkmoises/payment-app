@@ -153,7 +153,7 @@ it("Deve retornar um erro caso a transação não exista", () => {
   return request(app)
     .get("/transaction/65cff9e39c5d8cef70212321")
     .then((res) => {
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(404);
       expect(res.body.error).toBe("Transação não encontrada");
     });
 });
