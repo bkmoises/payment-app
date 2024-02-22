@@ -17,9 +17,7 @@ module.exports = {
 
   getOneAccount: async (req, res) => {
     const { id } = req.params;
-    const { data, statusCode, error } = await accountService.getOneAccount({
-      _id: id,
-    });
+    const { data, statusCode, error } = await accountService.getOneAccount(id);
 
     return res.status(statusCode).json(data || { error });
   },
@@ -27,18 +25,17 @@ module.exports = {
   updateOneAccount: async (req, res) => {
     const { id } = req.params;
     const { balance, status } = req.body;
+    const data = { balance, status };
 
     const { message, statusCode, error } =
-      await accountService.updateOneAccount({ _id: id }, { balance, status });
+      await accountService.updateOneAccount(id, data);
 
     return res.status(statusCode).json(error ? { error } : { message });
   },
 
   deleteOneAccount: async (req, res) => {
     const { id } = req.params;
-    const { statusCode, error } = await accountService.deleteOneAccount({
-      _id: id,
-    });
+    const { statusCode, error } = await accountService.deleteOneAccount(id);
 
     return res.status(statusCode).json({ error });
   },
