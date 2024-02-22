@@ -43,7 +43,7 @@ module.exports = {
 
   getUser: async (id) => {
     try {
-      const user = await dbUser.findOne(id);
+      const user = await dbUser.findById(id);
 
       if (!user) return HttpResponse.notFound(messageHelper.userNotFound);
 
@@ -55,7 +55,7 @@ module.exports = {
 
   updateUser: async (id, user) => {
     try {
-      await dbUser.updateOne(id, user);
+      await dbUser.findByIdAndUpdate(id, user);
 
       return HttpResponse.success(messageHelper.successUpdateUser);
     } catch (error) {
@@ -65,7 +65,7 @@ module.exports = {
 
   deleteUser: async (id) => {
     try {
-      await dbUser.deleteOne(id);
+      await dbUser.findByIdAndDelete(id);
 
       return HttpResponse.deleted();
     } catch (error) {
