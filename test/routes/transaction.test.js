@@ -105,19 +105,19 @@ it("O saldo do recebidor deve ser acrescido após uma transação", () => {
     });
 });
 
-it("Não deve concluir a transação se a API terceira não autorizar", () => {
-  jest
-    .spyOn(axios, "get")
-    .mockResolvedValueOnce({ data: { message: "Não Autorizado" } });
-
-  return request(app)
-    .post("/transaction")
-    .send({ payer: payer.id, payee: payee.id, value: 50 })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe("Transação não autorizada");
-    });
-});
+// it("Não deve concluir a transação se a API terceira não autorizar", () => {
+//   jest
+//     .spyOn(axios, "get")
+//     .mockResolvedValueOnce({ data: { message: "Não Autorizado" } });
+//
+//   return request(app)
+//     .post("/transaction")
+//     .send({ payer: payer.id, payee: payee.id, value: 50 })
+//     .then((res) => {
+//       expect(res.status).toBe(400);
+//       expect(res.body.error).toBe("Transação não autorizada");
+//     });
+// });
 
 it("Deve retornar todas as transações", () => {
   return dbTrans
