@@ -1,6 +1,7 @@
 const dbUser = require("../models/users");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 const messageHelper = require("../helpers/messages");
+const db = require("../database/database");
 
 module.exports = {
   createUser: async (user) => {
@@ -13,7 +14,7 @@ module.exports = {
 
       const { cpf, mail } = user;
 
-      const existingUser = await dbUser.findOne({ $or: [{ cpf }, { mail }] });
+      const existingUser = await db.findByEmailAndCpf(mail, cpf);
 
       if (existingUser) {
         if (existingUser.cpf === cpf)
@@ -23,7 +24,7 @@ module.exports = {
           return HttpError.badRequest(messageHelper.emailAlreadyExist);
       }
 
-      const newUser = await dbUser.create(user);
+      const newUser = await db.createUser(user);
 
       return HttpResponse.created(newUser);
     } catch (error) {
@@ -33,7 +34,7 @@ module.exports = {
 
   getAllUsers: async () => {
     try {
-      const userList = await dbUser.find();
+      const userList = await db.findUsers();
 
       return HttpResponse.success(messageHelper.successGetUsers, userList);
     } catch (error) {
@@ -43,7 +44,7 @@ module.exports = {
 
   getUser: async (id) => {
     try {
-      const user = await dbUser.findById(id);
+      const user = await db.findUser(id);
 
       if (!user) return HttpResponse.notFound(messageHelper.userNotFound);
 
@@ -55,7 +56,7 @@ module.exports = {
 
   updateUser: async (id, user) => {
     try {
-      await dbUser.findByIdAndUpdate(id, user);
+      await db.updateUser(id, user);
 
       return HttpResponse.success(messageHelper.successUpdateUser);
     } catch (error) {
@@ -65,7 +66,7 @@ module.exports = {
 
   deleteUser: async (id) => {
     try {
-      await dbUser.findByIdAndDelete(id);
+      await db.deleteUser(id);
 
       return HttpResponse.deleted();
     } catch (error) {
