@@ -1,76 +1,70 @@
-const userDb = require("../models/users");
-const accountDb = require("../models/accounts");
-const messageHelper = require("../helpers/messages");
+const db = require("../database/database");
+const message = require("../helpers/messages");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
   createAccount: async (userId) => {
     try {
-      if (!userId)
-        return HttpError.badRequest(messageHelper.isRequired("userId"));
+      if (!userId) return HttpError.badRequest(message.isRequired("userId"));
 
-      const existingUser = await userDb.findById(userId);
+      const existingUser = await db.findUser(userId);
 
-      if (!existingUser)
-        return HttpError.badRequest(messageHelper.userNotFound);
+      if (!existingUser) return HttpError.badRequest(message.userNotFound);
 
       if (!existingUser.status)
-        return HttpError.badRequest(messageHelper.inactiveUser);
+        return HttpError.badRequest(message.inactiveUser);
 
-      const existingAccount = await accountDb.findOne({ userId });
+      const existingAccount = await db.findAccountByUserId(userId);
 
       if (existingAccount)
-        return HttpError.badRequest(messageHelper.userAlreadyExist);
+        return HttpError.badRequest(message.userAlreadyExist);
 
-      const account = await accountDb.create({ userId });
+      const account = await db.createAccount(userId);
 
       return HttpResponse.created(account);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToCreateAccount);
+      return HttpError.internal(message.errorToCreateAccount);
     }
   },
 
   getAllAccounts: async () => {
     try {
-      const accountList = await accountDb.find();
+      const accounts = await db.findAccounts();
 
-      return HttpResponse.success(
-        messageHelper.successGetAccounts,
-        accountList,
-      );
+      return HttpResponse.success(message.successGetAccounts, accounts);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetAccounts);
+      return HttpError.internal(message.errorToGetAccounts);
     }
   },
 
   getOneAccount: async (id) => {
     try {
-      const account = await accountDb.findById(id);
-      if (!account) return HttpResponse.notFound(messageHelper.accountNotFound);
+      const account = await db.findAccount(id);
+      if (!account) return HttpResponse.notFound(message.accountNotFound);
 
-      return HttpResponse.success(messageHelper.successGetAccount, account);
+      return HttpResponse.success(message.successGetAccount, account);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetAccount);
+      return HttpError.internal(message.errorToGetAccount);
     }
   },
 
   updateOneAccount: async (id, data) => {
     try {
-      await accountDb.findByIdAndUpdate(id, data);
+      await db.updateAccount(id, data);
 
-      return HttpResponse.success(messageHelper.successUpdateAccount);
+      return HttpResponse.success(message.successUpdateAccount);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToUpdateAccount);
+      return HttpError.internal(message.errorToUpdateAccount);
     }
   },
 
   deleteOneAccount: async (id) => {
     try {
-      await accountDb.findByIdAndDelete(id);
+      await db.deleteAccount(id);
 
       return HttpResponse.deleted();
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToDeleteAccount);
+      return HttpError.internal(message.errorToDeleteAccount);
     }
   },
 };
