@@ -2,27 +2,21 @@ const mongoose = require("mongoose");
 const dbTrans = require("../models/transaction");
 const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
+const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
   createTransaction: async (transaction) => {
     try {
       const { payer, payee, value } = transaction;
 
-      const isSeller = await dbUser.findOne({ _id: payer });
+      const isSeller = await dbUser.findById(payer);
 
       if (isSeller.seller)
-        return {
-          statusCode: 400,
-          error: "Operação não permitida",
-        };
+        return HttpError.badRequest("Operação não permitida");
 
       const { balance } = await dbAccount.findOne({ userId: payer });
 
-      if (balance < value)
-        return {
-          statusCode: 400,
-          error: "Saldo insuficiente",
-        };
+      if (balance < value) return HttpError.badRequest("Saldo insuficiente");
 
       const newTransaction = await dbTrans.create(transaction);
 
@@ -34,15 +28,13 @@ module.exports = {
         { userId: payee },
         { balance: balance + value },
       );
-      return {
-        statusCode: 200,
+
+      return HttpResponse.success(
+        "Transação realizada com sucesso",
         newTransaction,
-      };
+      );
     } catch (error) {
-      return {
-        statusCode: 500,
-        error: "Erro ao realizar transação",
-      };
+      return HttpError.internal("Erro ao realizar transação");
     }
   },
 
@@ -50,34 +42,28 @@ module.exports = {
     try {
       const transactionList = await dbTrans.find();
 
-      return {
-        statusCode: 200,
+      return HttpResponse.success(
+        "Transações recuperadas com sucesso",
         transactionList,
-      };
+      );
     } catch (error) {
-      return {
-        statusCode: 500,
-        error: "Erro ao resgatar transações",
-      };
+      return HttpError.internal("Erro ao resgatar transações");
     }
   },
 
   getTransaction: async (id) => {
     try {
-      const transaction = await dbTrans.findOne(id);
+      const transaction = await dbTrans.findById(id);
 
       if (!transaction)
-        return { statusCode: 400, error: "Transação não encontrada" };
+        return HttpResponse.notFound("Transação não encontrada");
 
-      return {
-        statusCode: 200,
+      return HttpResponse.success(
+        "Transação recuperada com sucesso",
         transaction,
-      };
+      );
     } catch (error) {
-      return {
-        statusCode: 500,
-        error: "Erro ao resgatar transação",
-      };
+      return HttpError.internal("Erro ao resgatar transação");
     }
   },
 
@@ -86,7 +72,8 @@ module.exports = {
     session.startTransaction();
 
     try {
-      const transaction = await dbTrans.findOne(id).session(session);
+      const transaction = await dbTrans.findById(id).session(session);
+
       const { payer, payee, value } = transaction;
 
       await dbAccount.updateOne(
@@ -100,23 +87,17 @@ module.exports = {
         { session },
       );
 
-      await dbTrans.updateOne(id, { reverted: true }, { session });
+      await dbTrans.findByIdAndUpdate(id, { reverted: true }, { session });
 
       await session.commitTransaction();
       session.endSession();
 
-      return {
-        statusCode: 200,
-        message: "Transação revertida com sucesso",
-      };
+      return HttpResponse.success("Transação revertida com sucesso");
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
 
-      return {
-        statusCode: 500,
-        error: "Erro ao reverter a transação",
-      };
+      return HttpError.internal("Erro ao reverter a transação");
     }
   },
 };
