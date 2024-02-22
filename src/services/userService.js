@@ -1,6 +1,6 @@
-const { HttpResponse, HttpError } = require("../helpers/httpResponse");
-const messageHelper = require("../helpers/messages");
 const db = require("../database/database");
+const message = require("../helpers/messages");
+const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
   createUser: async (user) => {
@@ -8,7 +8,7 @@ module.exports = {
       const requiredFields = Object.keys(user);
       for (const field of requiredFields) {
         if (!user[field])
-          return HttpError.badRequest(messageHelper.isRequired(field));
+          return HttpError.badRequest(message.isRequired(field));
       }
 
       const { cpf, mail } = user;
@@ -17,17 +17,17 @@ module.exports = {
 
       if (existingUser) {
         if (existingUser.cpf === cpf)
-          return HttpError.badRequest(messageHelper.cpfAlreadyExist);
+          return HttpError.badRequest(message.cpfAlreadyExist);
 
         if (existingUser.mail === mail)
-          return HttpError.badRequest(messageHelper.emailAlreadyExist);
+          return HttpError.badRequest(message.emailAlreadyExist);
       }
 
       const newUser = await db.createUser(user);
 
       return HttpResponse.created(newUser);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToCreateUser);
+      return HttpError.internal(message.errorToCreateUser);
     }
   },
 
@@ -35,9 +35,9 @@ module.exports = {
     try {
       const users = await db.findUsers();
 
-      return HttpResponse.success(messageHelper.successGetUsers, users);
+      return HttpResponse.success(message.successGetUsers, users);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetUsers);
+      return HttpError.internal(message.errorToGetUsers);
     }
   },
 
@@ -45,11 +45,11 @@ module.exports = {
     try {
       const user = await db.findUser(id);
 
-      if (!user) return HttpResponse.notFound(messageHelper.userNotFound);
+      if (!user) return HttpResponse.notFound(message.userNotFound);
 
-      return HttpResponse.success(messageHelper.successGetUser, user);
+      return HttpResponse.success(message.successGetUser, user);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetUser);
+      return HttpError.internal(message.errorToGetUser);
     }
   },
 
@@ -57,9 +57,9 @@ module.exports = {
     try {
       await db.updateUser(id, user);
 
-      return HttpResponse.success(messageHelper.successUpdateUser);
+      return HttpResponse.success(message.successUpdateUser);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToUpdateUser);
+      return HttpError.internal(message.errorToUpdateUser);
     }
   },
 
@@ -69,7 +69,7 @@ module.exports = {
 
       return HttpResponse.deleted();
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToDeleteUser);
+      return HttpError.internal(message.errorToDeleteUser);
     }
   },
 };
