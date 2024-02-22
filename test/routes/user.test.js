@@ -162,7 +162,7 @@ it("Deve remover um usuário", () => {
   });
 });
 
-it("Deve retornar um erro caso não consiga recuperar os usuários", () => {
+it("Deve retornar um erro caso não consiga resgatar os usuários", () => {
   const dbFindMock = jest.fn(() => {
     throw new Error();
   });
@@ -173,9 +173,7 @@ it("Deve retornar um erro caso não consiga recuperar os usuários", () => {
     .get("/user")
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe(
-        "Erro ao recuperar usuários do banco de dados",
-      );
+      expect(res.body.error).toBe("Erro ao resgatar usuários");
     });
 });
 
@@ -190,7 +188,7 @@ it("Deve retornar um erro caso o id fornecido seja invalido", () => {
     .get("/user/123454321")
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao recuperar usuário");
+      expect(res.body.error).toBe("Erro ao resgatar usuário");
     });
 });
 
