@@ -33,9 +33,9 @@ module.exports = {
 
   getAllUsers: async () => {
     try {
-      const userList = await db.findUsers();
+      const users = await db.findUsers();
 
-      return HttpResponse.success(messageHelper.successGetUsers, userList);
+      return HttpResponse.success(messageHelper.successGetUsers, users);
     } catch (error) {
       return HttpError.internal(messageHelper.errorToGetUsers);
     }
