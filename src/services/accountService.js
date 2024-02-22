@@ -1,30 +1,32 @@
 const userDb = require("../models/users");
 const accountDb = require("../models/accounts");
+const messageHelper = require("../helpers/messages");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
   createAccount: async (userId) => {
     try {
-      if (!userId) return HttpError.badRequest("O campo userId é requerido");
+      if (!userId)
+        return HttpError.badRequest(messageHelper.isRequired("userId"));
 
       const existingUser = await userDb.findById(userId);
 
       if (!existingUser)
-        return HttpError.badRequest("O usuário informado não existe");
+        return HttpError.badRequest(messageHelper.userNotFound);
 
       if (!existingUser.status)
-        return HttpError.badRequest("O usuário informado está inativo");
+        return HttpError.badRequest(messageHelper.inactiveUser);
 
       const existingAccount = await accountDb.findOne({ userId });
 
       if (existingAccount)
-        return HttpError.badRequest("Este usuário já possui uma conta");
+        return HttpError.badRequest(messageHelper.userAlreadyExist);
 
       const account = await accountDb.create({ userId });
 
       return HttpResponse.created(account);
     } catch (error) {
-      return HttpError.internal("Erro ao criar conta");
+      return HttpError.internal(messageHelper.errorToCreateAccount);
     }
   },
 
@@ -33,22 +35,22 @@ module.exports = {
       const accountList = await accountDb.find();
 
       return HttpResponse.success(
-        "Contas recuperadas com sucesso",
+        messageHelper.successGetAccounts,
         accountList,
       );
     } catch (error) {
-      return HttpError.internal("Erro ao recuperar contas");
+      return HttpError.internal(messageHelper.errorToGetAccounts);
     }
   },
 
   getOneAccount: async (id) => {
     try {
       const account = await accountDb.findOne(id);
-      if (!account) return HttpResponse.notFound("Conta não encontrada");
+      if (!account) return HttpResponse.notFound(messageHelper.accountNotFound);
 
-      return HttpResponse.success("Conta recuperada com sucesso", account);
+      return HttpResponse.success(messageHelper.successGetAccount, account);
     } catch (error) {
-      return HttpError.internal("Erro ao recuperar conta");
+      return HttpError.internal(messageHelper.errorToGetAccount);
     }
   },
 
@@ -56,9 +58,9 @@ module.exports = {
     try {
       await accountDb.updateOne(id, data);
 
-      return HttpResponse.success("Conta alterada com sucesso");
+      return HttpResponse.success(messageHelper.successUpdateAccount);
     } catch (error) {
-      return HttpError.internal("Erro ao atualizar dados da conta");
+      return HttpError.internal(messageHelper.errorToUpdateAccount);
     }
   },
 
@@ -68,7 +70,7 @@ module.exports = {
 
       return HttpResponse.deleted();
     } catch (error) {
-      return HttpError.internal("Erro ao remover conta");
+      return HttpError.internal(messageHelper.errorToDeleteAccount);
     }
   },
 };
