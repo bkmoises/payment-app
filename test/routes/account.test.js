@@ -183,12 +183,12 @@ it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
     });
 });
 
-it("Deve retornar um erro caso não consiga ataulizar uma conta", () => {
+it("Deve retornar um erro caso não consiga atualizar uma conta", () => {
   const dbUpdateOneMock = jest.fn(() => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "updateOne").mockImplementation(dbUpdateOneMock);
+  jest.spyOn(accDb, "findByIdAndUpdate").mockImplementation(dbUpdateOneMock);
 
   return request(app)
     .put("/account/65cd5d0fa30a48596f000000")
@@ -204,7 +204,7 @@ it("Deve retornar um erro caso não consiga remover uma conta", () => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "deleteOne").mockImplementation(dbDeleteOneMock);
+  jest.spyOn(accDb, "findByIdAndDelete").mockImplementation(dbDeleteOneMock);
 
   return request(app)
     .delete("/account/65cd5d0fa30a48596f000000")
