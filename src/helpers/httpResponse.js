@@ -1,5 +1,5 @@
 class HttpResponse {
-  static Success(message, data) {
+  static success(message, data) {
     const response = {
       statusCode: 200,
       message: message,
@@ -10,27 +10,20 @@ class HttpResponse {
     return response;
   }
 
-  static Created(data) {
+  static created(data) {
     return {
       statusCode: 201,
       data,
     };
   }
 
-  static Deleted() {
+  static deleted() {
     return {
       statusCode: 204,
     };
   }
 
-  static BadRequest(message) {
-    return {
-      statusCode: 400,
-      error: message,
-    };
-  }
-
-  static NotFound(message) {
+  static notFound(message) {
     return {
       statusCode: 404,
       error: message,
@@ -39,10 +32,18 @@ class HttpResponse {
 }
 
 class HttpError extends Error {
-  constructor(message) {
-    super(message);
-    this.error = message;
-    this.statusCode = 500;
+  static internal(message) {
+    const error = new HttpError(message);
+    error.error = message;
+    error.statusCode = 500;
+    return error;
+  }
+
+  static badRequest(message) {
+    const error = new HttpError(message);
+    error.error = message;
+    error.statusCode = 400;
+    return error;
   }
 }
 
