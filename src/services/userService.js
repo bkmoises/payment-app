@@ -14,7 +14,7 @@ module.exports = {
       // Verifica se os campos obrigatórios estão presentes
       for (const field of requiredFields) {
         if (!user[field])
-          return HttpResponse.BadRequest(`O campo ${field} é requerido`);
+          return HttpError.badRequest(`O campo ${field} é requerido`);
       }
 
       // Verifica se o CPF ou o e-mail já estão cadastrados
@@ -24,19 +24,19 @@ module.exports = {
       // Verifica se o CPF ou o e-mail já estão cadastrados
       if (existingUser) {
         if (existingUser.cpf === cpf)
-          return HttpResponse.BadRequest("CPF já cadastrado no sistema");
+          return HttpError.badRequest("CPF já cadastrado no sistema");
 
         if (existingUser.mail === mail)
-          return HttpResponse.BadRequest("Email já cadastrado no sistema");
+          return HttpError.badRequest("Email já cadastrado no sistema");
       }
 
       // Cria o novo usuário no banco de dados
       const newUser = await dbUser.create(user);
       // Retorna um status de sucesso e o novo usuário
-      return HttpResponse.Created(newUser);
+      return HttpResponse.created(newUser);
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return new HttpError("Erro ao criar usuário");
+      return HttpError.internal("Erro ao criar usuário");
     }
   },
 
@@ -50,10 +50,10 @@ module.exports = {
       const userList = await dbUser.find();
 
       // Retorna os usuários com o status de sucesso
-      return HttpResponse.Success("Usuários resgatados com sucesso", userList);
+      return HttpResponse.success("Usuários resgatados com sucesso", userList);
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return new HttpError("Erro ao recuperar usuários do banco de dados");
+      return HttpError.internal("Erro ao recuperar usuários do banco de dados");
     }
   },
 
@@ -68,13 +68,13 @@ module.exports = {
       const user = await dbUser.findOne(id);
 
       // Verifica se o usuário foi encontrado
-      if (!user) return HttpResponse.NotFound("Usuário não encontrado");
+      if (!user) return HttpResponse.notFound("Usuário não encontrado");
 
       // Retorna o usuário com o status de sucesso
-      return HttpResponse.Success("Usuário resgatado com sucesso", user);
+      return HttpResponse.success("Usuário resgatado com sucesso", user);
     } catch (error) {
       // Em caso de erro desconhecido, retorna um objeto com status de erro e mensagem
-      return new HttpError("Erro ao recuperar usuário");
+      return HttpError.internal("Erro ao recuperar usuário");
     }
   },
 
@@ -90,10 +90,10 @@ module.exports = {
       await dbUser.updateOne(id, user);
 
       // Retorna um status de sucesso
-      return HttpResponse.Success("Usuário alterado com sucesso");
+      return HttpResponse.success("Usuário alterado com sucesso");
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return new HttpError("Erro ao alterar usuário");
+      return HttpError.internal("Erro ao alterar usuário");
     }
   },
 
@@ -108,10 +108,10 @@ module.exports = {
       await dbUser.deleteOne(id);
 
       // Retorna um status de sucesso
-      return HttpResponse.Deleted();
+      return HttpResponse.deleted();
     } catch (error) {
       // Em caso de erro, retorna um objeto com status de erro e mensagem
-      return new HttpError("Erro ao excluir usuário");
+      return HttpError.internal("Erro ao excluir usuário");
     }
   },
 };
