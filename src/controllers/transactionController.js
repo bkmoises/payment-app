@@ -8,34 +8,35 @@ const transaction = require("../models/transaction");
 module.exports = {
   makeTransfer: async (req, res) => {
     const { payer, payee, value } = req.body;
+    const transaction = { payer, payee, value };
 
-    const { newTransaction, statusCode, error } =
-      await transactionService.createTransaction({ payer, payee, value });
+    const { data, statusCode, error } =
+      await transactionService.createTransaction(transaction);
 
-    return res.status(statusCode).json(newTransaction || { error });
+    return res.status(statusCode).json(data || { error });
   },
 
   getAllTransactions: async (_req, res) => {
-    const { transactionList, statusCode, error } =
+    const { data, statusCode, error } =
       await transactionService.getTransactions();
 
-    return res.status(statusCode).json(transactionList || { error });
+    return res.status(statusCode).json(data || { error });
   },
 
   getTransactionById: async (req, res) => {
     const { id } = req.params;
-    const { transaction, statusCode, error } =
-      await transactionService.getTransaction({ _id: id });
+    const { data, statusCode, error } =
+      await transactionService.getTransaction(id);
 
-    return res.status(statusCode).json(transaction || { error });
+    return res.status(statusCode).json(data || { error });
   },
 
   revertTransaction: async (req, res) => {
     const { id } = req.params;
 
     const { statusCode, message, error } =
-      await transactionService.revertTransaction({ _id: id });
+      await transactionService.revertTransaction(id);
 
-    return res.status(statusCode).json(message ? { message } : { error });
+    return res.status(statusCode).json(error ? { error } : { message });
   },
 };
