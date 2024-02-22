@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const dbTrans = require("../models/transaction");
 const dbUser = require("../models/users");
 const dbAccount = require("../models/accounts");
+const messageHelper = require("../helpers/messages");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
@@ -12,11 +13,12 @@ module.exports = {
       const isSeller = await dbUser.findById(payer);
 
       if (isSeller.seller)
-        return HttpError.badRequest("Operação não permitida");
+        return HttpError.badRequest(messageHelper.notAllowed);
 
       const { balance } = await dbAccount.findOne({ userId: payer });
 
-      if (balance < value) return HttpError.badRequest("Saldo insuficiente");
+      if (balance < value)
+        return HttpError.badRequest(messageHelper.insufficientFunds);
 
       const newTransaction = await dbTrans.create(transaction);
 
@@ -30,11 +32,11 @@ module.exports = {
       );
 
       return HttpResponse.success(
-        "Transação realizada com sucesso",
+        messageHelper.successCreateTransaction,
         newTransaction,
       );
     } catch (error) {
-      return HttpError.internal("Erro ao realizar transação");
+      return HttpError.internal(messageHelper.errorToCreateTransaction);
     }
   },
 
@@ -43,11 +45,11 @@ module.exports = {
       const transactionList = await dbTrans.find();
 
       return HttpResponse.success(
-        "Transações recuperadas com sucesso",
+        messageHelper.successCreateTransaction,
         transactionList,
       );
     } catch (error) {
-      return HttpError.internal("Erro ao resgatar transações");
+      return HttpError.internal(messageHelper.errorToGetTransactions);
     }
   },
 
@@ -56,14 +58,14 @@ module.exports = {
       const transaction = await dbTrans.findById(id);
 
       if (!transaction)
-        return HttpResponse.notFound("Transação não encontrada");
+        return HttpResponse.notFound(messageHelper.transactionNotFound);
 
       return HttpResponse.success(
-        "Transação recuperada com sucesso",
+        messageHelper.successGetTransaction,
         transaction,
       );
     } catch (error) {
-      return HttpError.internal("Erro ao resgatar transação");
+      return HttpError.internal(messageHelper.errorToGetTransaction);
     }
   },
 
@@ -92,12 +94,12 @@ module.exports = {
       await session.commitTransaction();
       session.endSession();
 
-      return HttpResponse.success("Transação revertida com sucesso");
+      return HttpResponse.success(messageHelper.successToRevertTransaction);
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
 
-      return HttpError.internal("Erro ao reverter a transação");
+      return HttpError.internal(messageHelper.errorToRevertTransaction);
     }
   },
 };
