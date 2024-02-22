@@ -1,8 +1,5 @@
-const mongoose = require("mongoose");
-const dbTrans = require("../models/transaction");
-const dbUser = require("../models/users");
-const dbAccount = require("../models/accounts");
-const messageHelper = require("../helpers/messages");
+const db = require("../database/database");
+const message = require("../helpers/messages");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 
 module.exports = {
@@ -10,96 +7,67 @@ module.exports = {
     try {
       const { payer, payee, value } = transaction;
 
-      const isSeller = await dbUser.findById(payer);
+      const isSeller = await db.findUser(payer);
 
-      if (isSeller.seller)
-        return HttpError.badRequest(messageHelper.notAllowed);
+      if (isSeller.seller) return HttpError.badRequest(message.notAllowed);
 
-      const { balance } = await dbAccount.findOne({ userId: payer });
+      const { balance } = await db.findAccountByUserId(payer);
 
       if (balance < value)
-        return HttpError.badRequest(messageHelper.insufficientFunds);
+        return HttpError.badRequest(message.insufficientFunds);
 
-      const newTransaction = await dbTrans.create(transaction);
+      const newTransaction = await db.createTransaction(transaction);
 
-      await dbAccount.updateOne(
-        { userId: payer },
-        { balance: balance - value },
-      );
-      await dbAccount.updateOne(
-        { userId: payee },
-        { balance: balance + value },
-      );
+      await db.transferMoney(payer, payee, value);
 
       return HttpResponse.success(
-        messageHelper.successCreateTransaction,
+        message.successCreateTransaction,
         newTransaction,
       );
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToCreateTransaction);
+      return HttpError.internal(message.errorToCreateTransaction);
     }
   },
 
   getTransactions: async () => {
     try {
-      const transactionList = await dbTrans.find();
+      const transactions = await db.findTransactions();
 
       return HttpResponse.success(
-        messageHelper.successCreateTransaction,
-        transactionList,
+        message.successCreateTransaction,
+        transactions,
       );
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetTransactions);
+      return HttpError.internal(message.errorToGetTransactions);
     }
   },
 
   getTransaction: async (id) => {
     try {
-      const transaction = await dbTrans.findById(id);
+      const transaction = await db.findTransaction(id);
 
       if (!transaction)
-        return HttpResponse.notFound(messageHelper.transactionNotFound);
+        return HttpResponse.notFound(message.transactionNotFound);
 
-      return HttpResponse.success(
-        messageHelper.successGetTransaction,
-        transaction,
-      );
+      return HttpResponse.success(message.successGetTransaction, transaction);
     } catch (error) {
-      return HttpError.internal(messageHelper.errorToGetTransaction);
+      return HttpError.internal(message.errorToGetTransaction);
     }
   },
 
   revertTransaction: async (id) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-      const transaction = await dbTrans.findById(id).session(session);
+      const transaction = await db.findTransaction(id);
 
       const { payer, payee, value } = transaction;
 
-      await dbAccount.updateOne(
-        { userId: payer },
-        { $inc: { balance: value } },
-        { session },
-      );
-      await dbAccount.updateOne(
-        { userId: payee },
-        { $inc: { balance: -value } },
-        { session },
-      );
+      await db.returnValues(payer, payee, value);
 
-      await dbTrans.findByIdAndUpdate(id, { reverted: true }, { session });
+      await db.revertTransaction(id);
 
-      await session.commitTransaction();
-      session.endSession();
-
-      return HttpResponse.success(messageHelper.successToRevertTransaction);
+      return HttpResponse.success(message.successToRevertTransaction);
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-
-      return HttpError.internal(messageHelper.errorToRevertTransaction);
+      return HttpError.internal(message.errorToRevertTransaction);
     }
   },
 };
