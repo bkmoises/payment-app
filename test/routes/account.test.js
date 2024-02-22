@@ -51,7 +51,7 @@ it("Não deve criar uma conta com userId repetido", () => {
         .send({ userId: r.id })
         .then((res) => {
           expect(res.status).toBe(400);
-          expect(res.body.error).toBe("Este usuário já possui uma conta");
+          expect(res.body.error).toBe("Usuário já cadastrado no sistema");
         });
     });
   });
@@ -65,7 +65,7 @@ it("Não deve criar uam conta para usuário inativo", () => {
       .send({ userId: r.id })
       .then((res) => {
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe("O usuário informado está inativo");
+        expect(res.body.error).toBe("Usuário inativo");
       });
   });
 });
@@ -76,7 +76,7 @@ it("Não deve criar uma conta para usuário um usuário não cadastrado", () => 
     .send({ userId: "65cd5d0fa30a48596f000000" })
     .then((res) => {
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe("O usuário informado não existe");
+      expect(res.body.error).toBe("Usuário não encontrado");
     });
 });
 
@@ -164,7 +164,7 @@ it("Deve retornar um erro caso não consiga recuperar a lista de contas", () => 
     .get("/account")
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao recuperar contas");
+      expect(res.body.error).toBe("Erro ao resgatar contas");
     });
 });
 
@@ -179,7 +179,7 @@ it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
     .get("/account/65cd5d0fa30a48596f000000")
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao recuperar conta");
+      expect(res.body.error).toBe("Erro ao resgatar conta");
     });
 });
 
@@ -195,7 +195,7 @@ it("Deve retornar um erro caso não consiga ataulizar uma conta", () => {
     .send({ balance: 100, status: false })
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao atualizar dados da conta");
+      expect(res.body.error).toBe("Erro ao alterar conta");
     });
 });
 
@@ -210,6 +210,6 @@ it("Deve retornar um erro caso não consiga remover uma conta", () => {
     .delete("/account/65cd5d0fa30a48596f000000")
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao remover conta");
+      expect(res.body.error).toBe("Erro ao excluir conta");
     });
 });
