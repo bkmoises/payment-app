@@ -1,4 +1,3 @@
-const dbUser = require("../models/users");
 const { HttpResponse, HttpError } = require("../helpers/httpResponse");
 const messageHelper = require("../helpers/messages");
 const db = require("../database/database");
