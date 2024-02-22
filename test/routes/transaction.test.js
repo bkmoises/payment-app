@@ -230,7 +230,7 @@ it("Deve retornar um erro caso não consiga reverter uma transação", () => {
     .send({ reverted: true })
     .then((res) => {
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe("Erro ao reverter a transação");
+      expect(res.body.error).toBe("Erro ao reverter transação");
     });
 });
 
