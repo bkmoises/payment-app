@@ -45,7 +45,7 @@ module.exports = {
 
   getOneAccount: async (id) => {
     try {
-      const account = await accountDb.findOne(id);
+      const account = await accountDb.findById(id);
       if (!account) return HttpResponse.notFound(messageHelper.accountNotFound);
 
       return HttpResponse.success(messageHelper.successGetAccount, account);
@@ -56,7 +56,7 @@ module.exports = {
 
   updateOneAccount: async (id, data) => {
     try {
-      await accountDb.updateOne(id, data);
+      await accountDb.findByIdAndUpdate(id, data);
 
       return HttpResponse.success(messageHelper.successUpdateAccount);
     } catch (error) {
@@ -66,7 +66,7 @@ module.exports = {
 
   deleteOneAccount: async (id) => {
     try {
-      await accountDb.deleteOne(id);
+      await accountDb.findByIdAndDelete(id);
 
       return HttpResponse.deleted();
     } catch (error) {
