@@ -31,7 +31,7 @@ module.exports = {
 
   getTransactions: async () => {
     try {
-      const transactions = await db.findTransactions();
+      const transactions = await db.findTransaction();
 
       return HttpResponse.success(
         message.successCreateTransaction,
@@ -61,9 +61,7 @@ module.exports = {
 
       const { payer, payee, value } = transaction;
 
-      await db.returnValues(payer, payee, value);
-
-      await db.revertTransaction(id);
+      await db.revertTransaction(id, payer, payee, value);
 
       return HttpResponse.success(message.successToRevertTransaction);
     } catch (error) {
