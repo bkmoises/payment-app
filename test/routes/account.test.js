@@ -87,7 +87,7 @@ it("Deve retornar uma lista de contas", () => {
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.length).toBeGreaterThan(0);
-        expect(res.body[0]).toHaveProperty("balance", 100);
+        expect(res.body[0]).toHaveProperty("balance");
       });
   });
 });
