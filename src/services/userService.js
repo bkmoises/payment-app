@@ -33,7 +33,7 @@ module.exports = {
 
   getAllUsers: async () => {
     try {
-      const users = await db.findUsers();
+      const users = await db.findUser();
 
       return HttpResponse.success(message.successGetUsers, users);
     } catch (error) {
