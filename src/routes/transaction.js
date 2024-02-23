@@ -4,7 +4,7 @@ const transactionController = require("../controllers/transactionController");
 
 router
   .route("/")
-  .post(autorizationVerify, transactionController.makeTransfer)
+  .post(transactionController.makeTransfer)
   .get(transactionController.getAllTransactions);
 
 router
