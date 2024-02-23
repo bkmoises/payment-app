@@ -1,17 +1,17 @@
 const router = require("express").Router();
-const userController = require("../controllers/user");
+const controller = require("../controllers/user");
 
 // Rotas para manipulação de usuários
 router
   .route("/")
-  .post(userController.createUser) // Criar um novo usuário
-  .get(userController.getAllUsers); // Obter todos os usuários
+  .post(controller.createUser) // Criar um novo usuário
+  .get(controller.getAllUsers); // Obter todos os usuários
 
 // Rotas para manipulação de usuários por ID
 router
   .route("/:id")
-  .get(userController.getUserById) // Obter um usuário pelo ID
-  .put(userController.updateOneUser) // Atualizar um usuário pelo ID
-  .delete(userController.deleteOneUser); // Excluir um usuário pelo ID
+  .get(controller.getUserById) // Obter um usuário pelo ID
+  .put(controller.updateOneUser) // Atualizar um usuário pelo ID
+  .delete(controller.deleteOneUser); // Excluir um usuário pelo ID
 
 module.exports = router;
