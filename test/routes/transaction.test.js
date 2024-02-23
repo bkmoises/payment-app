@@ -1,10 +1,8 @@
 const axios = require("axios");
 const app = require("../../src/app");
 const request = require("supertest");
-const dbUser = require("../../src/models/user");
+const db = require("../../src/database/database");
 const mockCpf = require("../helpers/cpfGenerator");
-const dbAccount = require("../../src/models/account");
-const dbTrans = require("../../src/models/transaction");
 
 let users, payer, payee, payerAccount, payeeAccount;
 
@@ -26,10 +24,10 @@ beforeEach(async () => {
     },
   ];
 
-  payer = await dbUser.create(users[0]);
-  payerAccount = await dbAccount.create({ userId: payer.id, balance: 100 });
-  payee = await dbUser.create(users[1]);
-  payeeAccount = await dbAccount.create({ userId: payee.id, balance: 100 });
+  payer = await db.createUser(users[0]);
+  payerAccount = await db.createAccount(payer.id, 100);
+  payee = await db.createUser(users[1]);
+  payeeAccount = await db.createAccount(payee.id, 100);
 });
 
 it("Um usuário deve transferir dinheiro para um vendedor", () => {
@@ -45,7 +43,7 @@ it("Um usuário deve transferir dinheiro para um vendedor", () => {
 });
 
 it("Um usuário deve transferir dinheiro para outro usuário", () => {
-  return dbUser.updateOne({ _id: payee.id }, { seller: false }).then(() => {
+  return db.updateUser(payee.id, { seller: false }).then(() => {
     return request(app)
       .post("/transaction")
       .send({ payer: payer.id, payee: payee.id, value: 50 })
@@ -59,7 +57,7 @@ it("Um usuário deve transferir dinheiro para outro usuário", () => {
 });
 
 it("Um vendedor não deve transferir dinheiro para um usuário", () => {
-  return dbUser.updateOne({ _id: payer.id }, { seller: true }).then(() => {
+  return db.updateUser(payer.id, { seller: true }).then(() => {
     return request(app)
       .post("/transaction")
       .send({ payer: payer.id, payee: payee.id, value: 50 })
@@ -85,7 +83,7 @@ it("O saldo do pagador deve ser reduzido após uma transação", () => {
     .post("/transaction")
     .send({ payer: payer.id, payee: payee.id, value: 50 })
     .then((res) => {
-      return dbAccount.findOne({ userId: payer.id }).then((acc) => {
+      return db.findAccountByUserId(payer.id).then((acc) => {
         expect(res.status).toBe(200);
         expect(acc.balance).toBe(50);
       });
@@ -97,7 +95,7 @@ it("O saldo do recebidor deve ser acrescido após uma transação", () => {
     .post("/transaction")
     .send({ payer: payer.id, payee: payee.id, value: 50 })
     .then((res) => {
-      return dbAccount.findOne({ userId: payee.id }).then((acc) => {
+      return db.findAccountByUserId(payee.id).then((acc) => {
         expect(res.status).toBe(200);
         expect(acc.balance).toBe(150);
       });
@@ -119,8 +117,8 @@ it("Não deve concluir a transação se a API terceira não autorizar", () => {
 });
 
 it("Deve retornar todas as transações", () => {
-  return dbTrans
-    .create({ payer: payer.id, payee: payee.id, value: 50 })
+  return db
+    .createTransaction({ payer: payer.id, payee: payee.id, value: 50 })
     .then(() => {
       return request(app)
         .get("/transaction")
@@ -135,8 +133,8 @@ it("Deve retornar todas as transações", () => {
 });
 
 it("Deve retornar uma transação por ID", () => {
-  return dbTrans
-    .create({ payer: payer.id, payee: payee.id, value: 50 })
+  return db
+    .createTransaction({ payer: payer.id, payee: payee.id, value: 50 })
     .then((r) => {
       return request(app)
         .get(`/transaction/${r.id}`)
@@ -158,10 +156,10 @@ it("Deve retornar um erro caso a transação não exista", () => {
 });
 
 it("Deve reverter uma transação", () => {
-  return dbTrans
-    .create({ payer: payer.id, payee: payee.id, value: 50 })
+  return db
+    .createTransaction({ payer: payer.id, payee: payee.id, value: 50 })
     .then((r) => {
-      return dbTrans.findById(r.id).then(() => {
+      return db.findTransaction(r.id).then(() => {
         return request(app)
           .put(`/transaction/${r.id}`)
           .then((res) => {
@@ -173,7 +171,7 @@ it("Deve reverter uma transação", () => {
 });
 
 it("O valor da transação deve ser reconstituido no saldo do pagador e recebidor", async () => {
-  const transaction = await dbTrans.create({
+  const transaction = await db.createTransaction({
     payer: payer.id,
     payee: payee.id,
     value: 50,
@@ -181,10 +179,11 @@ it("O valor da transação deve ser reconstituido no saldo do pagador e recebido
 
   await request(app).put(`/transaction/${transaction.id}`);
 
-  const accountList = await dbAccount.find({ userId: [payer.id, payee.id] });
+  const payerAc = await db.findAccountByUserId(payer.id);
+  const payeeAc = await db.findAccountByUserId(payee.id);
 
-  expect(accountList[0].balance).toBe(150);
-  expect(accountList[1].balance).toBe(50);
+  expect(payerAc.balance).toBe(150);
+  expect(payeeAc.balance).toBe(50);
 });
 
 it("Deve retornar um erro caso não consiga resgatar uma lista de transações", () => {
@@ -192,7 +191,7 @@ it("Deve retornar um erro caso não consiga resgatar uma lista de transações",
     throw new Error();
   });
 
-  jest.spyOn(dbTrans, "find").mockImplementation(dbFindMock);
+  jest.spyOn(db, "findTransaction").mockImplementation(dbFindMock);
 
   return request(app)
     .get("/transaction")
@@ -207,7 +206,7 @@ it("Deve retornar um erro caso não consiga resgatar uma transação", () => {
     throw new Error();
   });
 
-  jest.spyOn(dbTrans, "findOne").mockImplementation(dbFindOneMock);
+  jest.spyOn(db, "findTransaction").mockImplementation(dbFindOneMock);
 
   return request(app)
     .get("/transaction/123454321")
@@ -222,7 +221,7 @@ it("Deve retornar um erro caso não consiga reverter uma transação", () => {
     throw new Error();
   });
 
-  jest.spyOn(dbTrans, "updateOne").mockImplementation(dbUpdateOneMock);
+  jest.spyOn(db, "revertTransaction").mockImplementation(dbUpdateOneMock);
 
   return request(app)
     .put("/transaction/123454311")
@@ -238,7 +237,7 @@ it("Deve retornar um erro caso não consiga realizar uma transação", () => {
     throw new Error();
   });
 
-  jest.spyOn(dbTrans, "create").mockImplementation(dbCreateMock);
+  jest.spyOn(db, "createTransaction").mockImplementation(dbCreateMock);
 
   return request(app)
     .post("/transaction")
