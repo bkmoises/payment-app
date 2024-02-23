@@ -29,7 +29,7 @@ module.exports = {
 
   getAllAccounts: async () => {
     try {
-      const accounts = await db.findAccounts();
+      const accounts = await db.findAccount();
 
       return HttpResponse.success(message.successGetAccounts, accounts);
     } catch (error) {
