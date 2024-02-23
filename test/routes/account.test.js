@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../../src/app");
-const userDb = require("../../src/models/users");
-const accDb = require("../../src/models/accounts");
+const userDb = require("../../src/models/user");
+const accDb = require("../../src/models/account");
 const account = require("../../src/controllers/account");
 const mockCpf = require("../helpers/cpfGenerator");
 

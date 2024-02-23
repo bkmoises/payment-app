@@ -1,5 +1,5 @@
-const user = require("../models/users");
-const account = require("../models/accounts");
+const user = require("../models/user");
+const account = require("../models/account");
 const transaction = require("../models/transaction");
 
 module.exports = {

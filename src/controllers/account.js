@@ -1,4 +1,4 @@
-const accountService = require("../services/accountService");
+const accountService = require("../services/account");
 
 module.exports = {
   createAccount: async (req, res) => {
@@ -25,6 +25,7 @@ module.exports = {
   updateOneAccount: async (req, res) => {
     const { id } = req.params;
     const { balance, status } = req.body;
+
     const data = { balance, status };
 
     const { message, statusCode, error } =

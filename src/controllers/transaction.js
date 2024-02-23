@@ -1,13 +1,10 @@
-const dbTrans = require("../models/transaction");
-const dbUser = require("../models/users");
-const dbAccount = require("../models/accounts");
-
-const transactionService = require("../services/transactionService");
+const transactionService = require("../services/transaction");
 const transaction = require("../models/transaction");
 
 module.exports = {
   makeTransfer: async (req, res) => {
     const { payer, payee, value } = req.body;
+
     const transaction = { payer, payee, value };
 
     const { data, statusCode, error } =

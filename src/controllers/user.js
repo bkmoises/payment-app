@@ -1,55 +1,45 @@
-const db = require("../models/users");
-const userService = require("../services/userService");
+const userService = require("../services/user");
 
 module.exports = {
   createUser: async (req, res) => {
     const { name, cpf, mail, passwd, seller } = req.body;
+
     const user = { name, cpf, mail, passwd, seller };
 
     const { data, statusCode, error } = await userService.createUser(user);
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json(data);
+    return res.status(statusCode).json(data || { error });
   },
 
   getAllUsers: async (_req, res) => {
     const { data, statusCode, error } = await userService.getAllUsers();
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json(data);
+    return res.status(statusCode).json(data || { error });
   },
 
   getUserById: async (req, res) => {
     const { id } = req.params;
     const { data, statusCode, error } = await userService.getUser(id);
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json(data);
+    return res.status(statusCode).json(data || { error });
   },
 
   updateOneUser: async (req, res) => {
-    const { id } = req.params;
     const user = req.body;
+    const { id } = req.params;
 
     const { message, statusCode, error } = await userService.updateUser(
       id,
       user,
     );
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json({ message });
+    return res.status(statusCode).json(error ? { error } : { message });
   },
 
   deleteOneUser: async (req, res) => {
     const { id } = req.params;
     const { statusCode, error } = await userService.deleteUser(id);
 
-    if (error) return res.status(statusCode).json({ error });
-
-    return res.status(statusCode).json();
+    return res.status(statusCode).json({ error });
   },
 };

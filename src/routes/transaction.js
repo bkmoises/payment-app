@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const autorizationVerify = require("../middlewares/middleware");
-const transactionController = require("../controllers/transactionController");
+const transactionController = require("../controllers/transaction");
 
 router
   .route("/")
