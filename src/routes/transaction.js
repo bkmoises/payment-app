@@ -1,15 +1,17 @@
 const router = require("express").Router();
 const autorizationVerify = require("../middlewares/middleware");
-const transactionController = require("../controllers/transaction");
+const controller = require("../controllers/transaction");
 
+// Rotas para manipulação de transações
 router
   .route("/")
-  .post(transactionController.makeTransfer)
-  .get(transactionController.getAllTransactions);
+  .post(controller.makeTransfer) // Criar uma nova transação
+  .get(controller.getAllTransactions); // Obter todas as transações
 
+// Rotas para manipulação de transações por ID
 router
   .route("/:id")
-  .get(transactionController.getTransactionById)
-  .put(transactionController.revertTransaction);
+  .get(controller.getTransactionById) // Obter uma transação pelo ID
+  .put(controller.revertTransaction); // Reverter uma transação pelo ID
 
 module.exports = router;
