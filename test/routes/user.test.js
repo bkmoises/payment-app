@@ -1,6 +1,6 @@
-const request = require("supertest");
 const app = require("../../src/app");
-const db = require("../../src/models/user");
+const request = require("supertest");
+const db = require("../../src/database/database");
 const mockCpf = require("../helpers/cpfGenerator");
 
 let user;
@@ -9,7 +9,7 @@ beforeEach(() => {
   user = {
     name: `user-${Date.now()}`,
     cpf: mockCpf(),
-    mail: `${Date.now()}@mail.com`,
+    mail: `${Date.now()}${Math.random()}@mail.com`,
     passwd: "12345",
     seller: true,
   };
@@ -83,7 +83,7 @@ it("Não deve cadastrar um novo usuário sem tipo de usuário", () => {
 });
 
 it("Não deve cadastrar um usuário com cpf repetido", () => {
-  return db.create(user).then(() => {
+  return db.createUser(user).then(() => {
     return request(app)
       .post("/user")
       .send(user)
@@ -95,7 +95,7 @@ it("Não deve cadastrar um usuário com cpf repetido", () => {
 });
 
 it("Não deve cadastrar um usuário com email repetido", () => {
-  return db.create(user).then(() => {
+  return db.createUser(user).then(() => {
     user.cpf = mockCpf();
     return request(app)
       .post("/user")
@@ -108,7 +108,7 @@ it("Não deve cadastrar um usuário com email repetido", () => {
 });
 
 it("Deve retornar uma lista de usuários cadastrados", () => {
-  return db.create(user).then(() => {
+  return db.createUser(user).then(() => {
     return request(app)
       .get("/user")
       .then((res) => {
@@ -120,7 +120,7 @@ it("Deve retornar uma lista de usuários cadastrados", () => {
 });
 
 it("Deve retornar um usuário cadastrado por id", () => {
-  return db.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .get(`/user/${r.id}`)
       .then((res) => {
@@ -141,7 +141,7 @@ it("Não deve retornar um usuário caso o id não esteja cadastrado", () => {
 });
 
 it("Deve atualizar os dados de um usuário", () => {
-  return db.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .put(`/user/${r.id}`)
       .send({ name: "new-name", passwd: "54321" })
@@ -153,7 +153,7 @@ it("Deve atualizar os dados de um usuário", () => {
 });
 
 it("Deve remover um usuário", () => {
-  return db.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .delete(`/user/${r.id}`)
       .then((res) => {
@@ -167,7 +167,7 @@ it("Deve retornar um erro caso não consiga resgatar os usuários", () => {
     throw new Error();
   });
 
-  jest.spyOn(db, "find").mockImplementation(dbFindMock);
+  jest.spyOn(db, "findUser").mockImplementation(dbFindMock);
 
   return request(app)
     .get("/user")
@@ -182,7 +182,7 @@ it("Deve retornar um erro caso o id fornecido seja invalido", () => {
     throw new Error();
   });
 
-  jest.spyOn(db, "findOne").mockImplementation(dbFindOneMock);
+  jest.spyOn(db, "findUser").mockImplementation(dbFindOneMock);
 
   return request(app)
     .get("/user/123454321")
@@ -197,7 +197,7 @@ it("Deve retornar um erro caso não consiga excluir um usuário", () => {
     throw new Error();
   });
 
-  jest.spyOn(db, "deleteOne").mockImplementation(dbDeleteOneMock);
+  jest.spyOn(db, "deleteUser").mockImplementation(dbDeleteOneMock);
 
   return request(app)
     .delete("/user/321412321")
@@ -212,7 +212,7 @@ it("Deve retornar um erro caso não consiga atualizar os dados de um usuário", 
     throw new Error();
   });
 
-  jest.spyOn(db, "updateOne").mockImplementation(dbUpdateOneMock);
+  jest.spyOn(db, "updateUser").mockImplementation(dbUpdateOneMock);
 
   return request(app)
     .put("/user/123454321")
@@ -228,7 +228,7 @@ it("Deve retornar um erro caso não consiga cadastrar um usuário", () => {
     throw new Error();
   });
 
-  jest.spyOn(db, "create").mockImplementation(dbCreateMock);
+  jest.spyOn(db, "createUser").mockImplementation(dbCreateMock);
 
   return request(app)
     .post("/user")
