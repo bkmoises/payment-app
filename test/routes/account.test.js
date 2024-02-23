@@ -1,8 +1,6 @@
 const request = require("supertest");
 const app = require("../../src/app");
-const userDb = require("../../src/models/user");
-const accDb = require("../../src/models/account");
-const account = require("../../src/controllers/account");
+const db = require("../../src/database/database");
 const mockCpf = require("../helpers/cpfGenerator");
 
 let user;
@@ -21,7 +19,7 @@ beforeEach(() => {
 });
 
 it("Deve criar uma nova conta", () => {
-  return userDb.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .post("/account")
       .send({ userId: r.id })
@@ -44,8 +42,8 @@ it("Não deve criar uma conta sem userId", () => {
 });
 
 it("Não deve criar uma conta com userId repetido", () => {
-  return userDb.create(user).then((r) => {
-    return accDb.create({ userId: r.id }).then((acc) => {
+  return db.createUser(user).then((r) => {
+    return db.createAccount(r.id).then((acc) => {
       return request(app)
         .post("/account")
         .send({ userId: r.id })
@@ -59,7 +57,7 @@ it("Não deve criar uma conta com userId repetido", () => {
 
 it("Não deve criar uam conta para usuário inativo", () => {
   user.status = false;
-  return userDb.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .post("/account")
       .send({ userId: r.id })
@@ -81,7 +79,7 @@ it("Não deve criar uma conta para usuário um usuário não cadastrado", () => 
 });
 
 it("Deve retornar uma lista de contas", () => {
-  return accDb.create({ userId: Date.now() }).then(() => {
+  return db.createAccount(Date.now()).then(() => {
     return request(app)
       .get("/account")
       .then((res) => {
@@ -93,7 +91,7 @@ it("Deve retornar uma lista de contas", () => {
 });
 
 it("Deve retornar uma conta por id", () => {
-  return accDb.create({ userId }).then((r) => {
+  return db.createAccount(userId).then((r) => {
     return request(app)
       .get(`/account/${r.id}`)
       .then((res) => {
@@ -113,7 +111,7 @@ it("Não deve retornar uma conta caso o ID não exista no banco", () => {
 });
 
 it("Deve alterar uma conta por id", () => {
-  return accDb.create({ userId }).then((r) => {
+  return db.createAccount(userId).then((r) => {
     return request(app)
       .put(`/account/${r.id}`)
       .send({ balance: 100 })
@@ -125,7 +123,7 @@ it("Deve alterar uma conta por id", () => {
 });
 
 it("Deve remover um conta por id", () => {
-  return accDb.create({ userId }).then((r) => {
+  return db.createAccount(userId).then((r) => {
     return request(app)
       .delete(`/account/${r.id}`)
       .then((res) => {
@@ -140,9 +138,9 @@ it("Deve retornar um erro caso não consiga criar uma conta", () => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "create").mockImplementation(dbCreateMock);
+  jest.spyOn(db, "createAccount").mockImplementation(dbCreateMock);
 
-  return userDb.create(user).then((r) => {
+  return db.createUser(user).then((r) => {
     return request(app)
       .post("/account")
       .send({ userId: r.id })
@@ -158,7 +156,7 @@ it("Deve retornar um erro caso não consiga recuperar a lista de contas", () => 
     throw new Error();
   });
 
-  jest.spyOn(accDb, "find").mockImplementation(dbFindMock);
+  jest.spyOn(db, "findAccount").mockImplementation(dbFindMock);
 
   return request(app)
     .get("/account")
@@ -173,7 +171,7 @@ it("Deve retornar um erro caso não consiga recuperar uma conta", () => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "findOne").mockImplementation(dbFindOneMock);
+  jest.spyOn(db, "findAccount").mockImplementation(dbFindOneMock);
 
   return request(app)
     .get("/account/65cd5d0fa30a48596f000000")
@@ -188,7 +186,7 @@ it("Deve retornar um erro caso não consiga atualizar uma conta", () => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "findByIdAndUpdate").mockImplementation(dbUpdateOneMock);
+  jest.spyOn(db, "updateAccount").mockImplementation(dbUpdateOneMock);
 
   return request(app)
     .put("/account/65cd5d0fa30a48596f000000")
@@ -204,7 +202,7 @@ it("Deve retornar um erro caso não consiga remover uma conta", () => {
     throw new Error();
   });
 
-  jest.spyOn(accDb, "findByIdAndDelete").mockImplementation(dbDeleteOneMock);
+  jest.spyOn(db, "deleteAccount").mockImplementation(dbDeleteOneMock);
 
   return request(app)
     .delete("/account/65cd5d0fa30a48596f000000")
