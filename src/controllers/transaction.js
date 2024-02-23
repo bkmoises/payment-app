@@ -1,5 +1,4 @@
-const transactionService = require("../services/transaction");
-const transaction = require("../models/transaction");
+const service = require("../services/transaction");
 
 module.exports = {
   makeTransfer: async (req, res) => {
@@ -8,22 +7,20 @@ module.exports = {
     const transaction = { payer, payee, value };
 
     const { data, statusCode, error } =
-      await transactionService.createTransaction(transaction);
+      await service.createTransaction(transaction);
 
     return res.status(statusCode).json(data || { error });
   },
 
   getAllTransactions: async (_req, res) => {
-    const { data, statusCode, error } =
-      await transactionService.getTransactions();
+    const { data, statusCode, error } = await service.getTransactions();
 
     return res.status(statusCode).json(data || { error });
   },
 
   getTransactionById: async (req, res) => {
     const { id } = req.params;
-    const { data, statusCode, error } =
-      await transactionService.getTransaction(id);
+    const { data, statusCode, error } = await service.getTransaction(id);
 
     return res.status(statusCode).json(data || { error });
   },
@@ -31,8 +28,7 @@ module.exports = {
   revertTransaction: async (req, res) => {
     const { id } = req.params;
 
-    const { statusCode, message, error } =
-      await transactionService.revertTransaction(id);
+    const { statusCode, message, error } = await service.revertTransaction(id);
 
     return res.status(statusCode).json(error ? { error } : { message });
   },
