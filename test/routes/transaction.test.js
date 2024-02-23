@@ -1,11 +1,10 @@
 const axios = require("axios");
-const request = require("supertest");
 const app = require("../../src/app");
+const request = require("supertest");
 const dbUser = require("../../src/models/user");
+const mockCpf = require("../helpers/cpfGenerator");
 const dbAccount = require("../../src/models/account");
 const dbTrans = require("../../src/models/transaction");
-const mockCpf = require("../helpers/cpfGenerator");
-const autorizationVerify = require("../../src/middlewares/middleware");
 
 let users, payer, payee, payerAccount, payeeAccount;
 
@@ -105,19 +104,19 @@ it("O saldo do recebidor deve ser acrescido após uma transação", () => {
     });
 });
 
-// it("Não deve concluir a transação se a API terceira não autorizar", () => {
-//   jest
-//     .spyOn(axios, "get")
-//     .mockResolvedValueOnce({ data: { message: "Não Autorizado" } });
-//
-//   return request(app)
-//     .post("/transaction")
-//     .send({ payer: payer.id, payee: payee.id, value: 50 })
-//     .then((res) => {
-//       expect(res.status).toBe(400);
-//       expect(res.body.error).toBe("Transação não autorizada");
-//     });
-// });
+it("Não deve concluir a transação se a API terceira não autorizar", () => {
+  jest
+    .spyOn(axios, "get")
+    .mockResolvedValueOnce({ data: { message: "Não Autorizado" } });
+
+  return request(app)
+    .post("/transaction")
+    .send({ payer: payer.id, payee: payee.id, value: 50 })
+    .then((res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe("Transação não autorizada");
+    });
+});
 
 it("Deve retornar todas as transações", () => {
   return dbTrans
