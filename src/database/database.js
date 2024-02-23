@@ -3,31 +3,58 @@ const account = require("../models/accounts");
 const transaction = require("../models/transaction");
 
 module.exports = {
-  findUsers: async () => user.find(),
-  findAccounts: async () => account.find(),
-  findTransactions: async () => transaction.find(),
+  findUser: (id) => {
+    if (id) return user.findById(id);
+    return user.find();
+  },
+  findAccount: (id) => {
+    if (id) return account.findById(id);
+    return account.find();
+  },
 
-  createUser: async (data) => user.create(data),
-  createAccount: async (userId) => account.create({ userId }),
-  createTransaction: async (data) => transaction.create(data),
-  revertTransaction: async (id) =>
-    transaction.findByIdAndUpdate(id, { reverted: true }),
+  findTransaction: (id) => {
+    if (id) return transaction.findById(id);
+    return transaction.find();
+  },
 
-  findUser: async (id) => user.findById(id),
-  findAccount: async (id) => account.findById(id),
-  findTransaction: async (id) => transaction.findById(id),
-  findAccountByUserId: async (userId) => account.findOne({ userId }),
-  findByEmailAndCpf: async (mail, cpf) =>
-    user.findOne({ $or: [{ mail }, { cpf }] }),
+  createUser: (data) => {
+    return user.create(data);
+  },
 
-  updateUser: async (id, data) => user.findByIdAndUpdate(id, data),
-  updateAccount: async (id, data) => account.findByIdAndUpdate(id, data),
+  createAccount: (userId) => {
+    return account.create({ userId });
+  },
 
-  deleteUser: async (id) => user.findByIdAndDelete(id),
-  deleteAccount: async (id) => account.findByIdAndDelete(id),
+  createTransaction: (data) => {
+    return transaction.create(data);
+  },
 
-  transferMoney: async (payer, payee, value) =>
-    account.bulkWrite([
+  findAccountByUserId: (userId) => {
+    return account.findOne({ userId });
+  },
+
+  findByEmailAndCpf: (mail, cpf) => {
+    return user.findOne({ $or: [{ mail }, { cpf }] });
+  },
+
+  updateUser: (id, data) => {
+    return user.findByIdAndUpdate(id, data);
+  },
+
+  updateAccount: (id, data) => {
+    return account.findByIdAndUpdate(id, data);
+  },
+
+  deleteUser: (id) => {
+    return user.findByIdAndDelete(id);
+  },
+
+  deleteAccount: (id) => {
+    return account.findByIdAndDelete(id);
+  },
+
+  transferMoney: (payer, payee, value) => {
+    return account.bulkWrite([
       {
         updateOne: {
           filter: { userId: payer },
@@ -40,10 +67,11 @@ module.exports = {
           update: { $inc: { balance: value } },
         },
       },
-    ]),
+    ]);
+  },
 
-  returnValues: async (payer, payee, value) =>
-    account.bulkWrite([
+  revertTransaction: async (id, payer, payee, value) => {
+    await account.bulkWrite([
       {
         updateOne: {
           filter: { userId: payer },
@@ -56,5 +84,8 @@ module.exports = {
           update: { $inc: { balance: -value } },
         },
       },
-    ]),
+    ]);
+
+    return transaction.findByIdAndUpdate(id, { reverted: true });
+  },
 };
