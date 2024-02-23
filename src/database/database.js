@@ -21,7 +21,8 @@ module.exports = {
     return user.create(data);
   },
 
-  createAccount: (userId) => {
+  createAccount: (userId, balance) => {
+    if (balance) return account.create({ userId, balance });
     return account.create({ userId });
   },
 
