@@ -1,6 +1,6 @@
 const db = require("../database/database");
-const message = require("../helpers/messages");
-const { HttpResponse, HttpError } = require("../helpers/httpResponse");
+const message = require("../utils/messages");
+const { HttpResponse, HttpError } = require("../utils/httpResponse");
 
 module.exports = {
   createTransaction: async (transaction) => {
