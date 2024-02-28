@@ -10,7 +10,7 @@ router
 // Rotas para manipulação de contas por ID
 router
   .route("/:id")
-  .get(controller.getOneAccount) // Obter uma conta pelo ID
+  .get(controller.getAccountById) // Obter uma conta pelo ID
   .put(controller.updateOneAccount) // Atualizar uma conta pelo ID
   .delete(controller.deleteOneAccount); // Excluir uma conta pelo ID
 

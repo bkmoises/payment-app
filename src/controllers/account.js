@@ -14,7 +14,7 @@ module.exports = {
     return res.status(statusCode).json(data || { error });
   },
 
-  getOneAccount: async (req, res) => {
+  getAccountById: async (req, res) => {
     const { id } = req.params;
     const { data, statusCode, error } = await service.getOneAccount(id);
 
