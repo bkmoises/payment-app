@@ -1,7 +1,7 @@
 require("dotenv").config();
 const axios = require("axios");
 
-const AUTH_PORT = process.env.AUTH_PORT;
+const { AUTH_PORT } = process.env;
 const URI = `http://localhost:${AUTH_PORT}/authorization`;
 
 const authorizationVerify = async (_req, res, next) => {
