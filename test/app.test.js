@@ -1,4 +1,6 @@
+const express = require("express");
 const request = require("supertest");
+
 const app = require("../src/app");
 
 it("Deve responder na raiz", () => {
@@ -10,7 +12,7 @@ it("Deve responder na raiz", () => {
     });
 });
 
-it("Deve retornar um error quando tentar acessar uma rota inesistente", () => {
+it("Deve retornar um erro quando tentar acessar uma rota inesistente", () => {
   return request(app)
     .get("/mockRoute")
     .then((res) => {

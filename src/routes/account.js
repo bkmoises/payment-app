@@ -1,4 +1,5 @@
 const router = require("express").Router();
+
 const controller = require("../controllers/account");
 
 // Rotas para manipulação de contas

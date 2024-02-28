@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const authorizationVerify = require("../middlewares/authorization");
+
 const controller = require("../controllers/transaction");
+const authorizationVerify = require("../middlewares/authorization");
 
 // Rotas para manipulação de transações
 router
